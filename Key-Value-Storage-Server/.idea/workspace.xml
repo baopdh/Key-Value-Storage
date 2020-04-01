@@ -1,0 +1,134 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ChangeListManager">
+    <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="">
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/gen/KVStoreService.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/gen/User.java" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/handler/KVStoreHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/Main.java" afterDir="false" />
+    </list>
+    <option name="SHOW_DIALOG" value="false" />
+    <option name="HIGHLIGHT_CONFLICTS" value="true" />
+    <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
+    <option name="LAST_RESOLUTION" value="IGNORE" />
+  </component>
+  <component name="FileTemplateManagerImpl">
+    <option name="RECENT_TEMPLATES">
+      <list>
+        <option value="Class" />
+      </list>
+    </option>
+  </component>
+  <component name="Git.Settings">
+    <option name="RECENT_GIT_ROOT_PATH" value="$PROJECT_DIR$" />
+  </component>
+  <component name="ProjectId" id="1Zr2OzHQ87W3YJI7vOBhtUVKrRn" />
+  <component name="ProjectLevelVcsManager" settingsEditedManually="true" />
+  <component name="ProjectViewState">
+    <option name="hideEmptyMiddlePackages" value="true" />
+    <option name="showExcludedFiles" value="true" />
+    <option name="showLibraryContents" value="true" />
+  </component>
+  <component name="PropertiesComponent">
+    <property name="RunOnceActivity.ShowReadmeOnStart" value="true" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
+    <property name="settings.editor.selected.configurable" value="vcs.Git" />
+  </component>
+  <component name="RunManager">
+    <configuration name="Main" type="Application" factoryName="Application" temporary="true" nameIsGenerated="true">
+      <option name="MAIN_CLASS_NAME" value="com.baopdh.dbserver.Main" />
+      <module name="DBServer" />
+      <option name="VM_PARAMETERS" value="-Djava.library.path=.:/usr/local/lib" />
+      <extension name="coverage">
+        <pattern>
+          <option name="PATTERN" value="com.baopdh.dbserver.*" />
+          <option name="ENABLED" value="true" />
+        </pattern>
+      </extension>
+      <method v="2">
+        <option name="Make" enabled="true" />
+      </method>
+    </configuration>
+    <recent_temporary>
+      <list>
+        <item itemvalue="Application.Main" />
+      </list>
+    </recent_temporary>
+  </component>
+  <component name="TaskManager">
+    <task active="true" id="Default" summary="Default task">
+      <changelist id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="" />
+      <created>1585582864438</created>
+      <option name="number" value="Default" />
+      <option name="presentableId" value="Default" />
+      <updated>1585582864438</updated>
+    </task>
+    <servers />
+  </component>
+  <component name="WindowStateProjectService">
+    <state x="486" y="220" width="524" height="484" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog" timestamp="1585587734208">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="486" y="220" width="524" height="484" key="#com.intellij.codeInsight.editorActions.RestoreReferencesDialog/67.27.1373.873@67.27.1373.873" timestamp="1585587734208" />
+    <state x="211" y="120" key="#com.intellij.execution.impl.EditConfigurationsDialog" timestamp="1585586158947">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="211" y="120" key="#com.intellij.execution.impl.EditConfigurationsDialog/67.27.1373.873@67.27.1373.873" timestamp="1585586158947" />
+    <state x="561" y="175" width="374" height="575" key="#com.intellij.ide.util.MemberChooser" timestamp="1585731920606">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="561" y="175" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/67.27.1373.873@67.27.1373.873" timestamp="1585731920606" />
+    <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl" timestamp="1585723456179">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl/67.27.1373.873@67.27.1373.873" timestamp="1585723456179" />
+    <state width="1327" height="219" key="GridCell.Tab.0.bottom" timestamp="1585737194013">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="219" key="GridCell.Tab.0.bottom/67.27.1373.873@67.27.1373.873" timestamp="1585737194013" />
+    <state width="1327" height="219" key="GridCell.Tab.0.center" timestamp="1585737194011">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="219" key="GridCell.Tab.0.center/67.27.1373.873@67.27.1373.873" timestamp="1585737194011" />
+    <state width="1327" height="219" key="GridCell.Tab.0.left" timestamp="1585737194009">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="219" key="GridCell.Tab.0.left/67.27.1373.873@67.27.1373.873" timestamp="1585737194009" />
+    <state width="1327" height="219" key="GridCell.Tab.0.right" timestamp="1585737194012">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="219" key="GridCell.Tab.0.right/67.27.1373.873@67.27.1373.873" timestamp="1585737194012" />
+    <state width="1327" height="272" key="GridCell.Tab.1.bottom" timestamp="1585672566815">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="272" key="GridCell.Tab.1.bottom/67.27.1373.873@67.27.1373.873" timestamp="1585672566815" />
+    <state width="1327" height="272" key="GridCell.Tab.1.center" timestamp="1585672566810">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="272" key="GridCell.Tab.1.center/67.27.1373.873@67.27.1373.873" timestamp="1585672566810" />
+    <state width="1327" height="272" key="GridCell.Tab.1.left" timestamp="1585672566809">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="272" key="GridCell.Tab.1.left/67.27.1373.873@67.27.1373.873" timestamp="1585672566809" />
+    <state width="1327" height="272" key="GridCell.Tab.1.right" timestamp="1585672566813">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state width="1327" height="272" key="GridCell.Tab.1.right/67.27.1373.873@67.27.1373.873" timestamp="1585672566813" />
+    <state x="409" y="291" key="com.intellij.ide.util.TipDialog" timestamp="1585582881308">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="409" y="291" key="com.intellij.ide.util.TipDialog/67.27.1373.873@67.27.1373.873" timestamp="1585582881308" />
+    <state x="398" y="71" width="710" height="783" key="find.popup" timestamp="1585673697540">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="398" y="71" width="710" height="783" key="find.popup/67.27.1373.873@67.27.1373.873" timestamp="1585673697540" />
+    <state x="67" y="104" width="1363" height="796" key="new project wizard" timestamp="1585723502110">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="67" y="104" width="1363" height="796" key="new project wizard/67.27.1373.873@67.27.1373.873" timestamp="1585723502110" />
+    <state x="417" y="208" key="run.anything.popup" timestamp="1585587714999">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="417" y="208" key="run.anything.popup/67.27.1373.873@67.27.1373.873" timestamp="1585587714999" />
+  </component>
+</project>
