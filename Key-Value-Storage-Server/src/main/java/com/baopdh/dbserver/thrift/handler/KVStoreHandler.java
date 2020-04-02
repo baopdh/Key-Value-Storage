@@ -10,7 +10,7 @@ public class KVStoreHandler implements KVStoreService.Iface {
 
     public KVStoreHandler() {
         databaseAccessLayer =
-                new DatabaseAccessLayer<>("Test", KeyGenerate.TYPE.INT);
+                new DatabaseAccessLayer<>("Test", KeyGenerate.TYPE.INT, User.class);
         databaseAccessLayer.start();
     }
 

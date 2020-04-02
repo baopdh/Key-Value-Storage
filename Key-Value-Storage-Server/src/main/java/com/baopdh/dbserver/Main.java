@@ -5,13 +5,17 @@
  */
 package com.baopdh.dbserver;
 
+import com.baopdh.dbserver.keygen.KeyGenerate;
 import com.baopdh.dbserver.thrift.gen.KVStoreService;
+import com.baopdh.dbserver.thrift.gen.User;
 import com.baopdh.dbserver.thrift.handler.KVStoreHandler;
 import org.apache.thrift.server.TServer;
 import org.apache.thrift.server.TSimpleServer;
 import org.apache.thrift.server.TThreadPoolServer;
 import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
+
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -41,8 +45,8 @@ public class Main {
     }
 
 //    public static void main(String[] args) {
-//        DatabaseAccessLayer<Integer, String> databaseAccessLayer =
-//                new DatabaseAccessLayer<>("Test", KeyGenerate.TYPE.INT);
+//        DatabaseAccessLayer<Integer, User> databaseAccessLayer =
+//                new DatabaseAccessLayer<>("Test", KeyGenerate.TYPE.INT, User.class);
 //
 //        databaseAccessLayer.start();
 //
@@ -56,17 +60,23 @@ public class Main {
 //        for (int i = 0; i < 3; ++i) {
 //            switch (action[i]) {
 //                case put:
-//                    System.out.println("put " + a[i]);
-//                    databaseAccessLayer.put(String.valueOf(a[i]));
+//                    System.out.println("put " + a[i] + " " + databaseAccessLayer.put(new User()));
 //                    break;
 //                case get:
 //                    System.out.println("get " + a[i] + " " + databaseAccessLayer.get(a[i]));
 //                    break;
 //                case delete:
-//                    System.out.println("delete " + databaseAccessLayer.remove(a[i]));
+//                    System.out.println("delete " + a[i] + " " + databaseAccessLayer.remove(a[i]));
 //                    break;
 //            }
 //            System.out.println("---------------------------");
+//        }
+//
+//        //wait 1s
+//        try {
+//            TimeUnit.SECONDS.sleep(1);
+//        } catch (InterruptedException e) {
+//            System.out.println(e.getMessage());
 //        }
 //
 //        for (int i = 3; i < action.length; ++i) {
@@ -74,14 +84,13 @@ public class Main {
 //            Runnable runnable = () -> {
 //                switch (action[ind]) {
 //                    case put:
-//                        System.out.println("put " + a[ind]);
-//                        databaseAccessLayer.put(String.valueOf(a[ind]));
+//                        System.out.println("put " + a[ind] + " " + databaseAccessLayer.put(new User()));
 //                        break;
 //                    case get:
 //                        System.out.println("get " + a[ind] + " " + databaseAccessLayer.get(a[ind]));
 //                        break;
 //                    case delete:
-//                        System.out.println("delete " + databaseAccessLayer.remove(a[ind]));
+//                        System.out.println("delete " + a[ind] + " " + databaseAccessLayer.remove(a[ind]));
 //                        break;
 //                }
 //            };

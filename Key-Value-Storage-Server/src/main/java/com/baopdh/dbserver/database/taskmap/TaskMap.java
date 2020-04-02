@@ -37,9 +37,7 @@ public class TaskMap<K, V> {
         // -----------------------------------
 
         PendingTask<V> pTask = this.find(key);
-        if (pTask == null) // if it has been removed, return (case: same key, task1 running, task2 come in)
-            return;
-        if (pTask.downCountAndGet() == 0) // if no task's come in, remove
+        if (pTask.downCountAndGet() == 0) // if this is the last task with same key
             this.tasks.remove(key);
 
         mutex[index].release();
@@ -50,8 +48,6 @@ public class TaskMap<K, V> {
 
         if (pTask != null) {
             pTask.updateTask(type, value);
-            // put in case it has been removed after a running task with the same key
-            this.tasks.put(key, pTask);
         } else {
             this.tasks.put(key, new PendingTask<V>(type, value));
         }

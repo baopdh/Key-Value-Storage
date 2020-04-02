@@ -3,6 +3,8 @@ package com.baopdh.dbserver.util;
 import java.io.File;
 
 public class FileUtil {
+    private FileUtil() {}
+
     public static boolean makeDirIfNotExist(String dirUrl) {
         File directory = new File(dirUrl);
         if (!directory.exists()){

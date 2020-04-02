@@ -13,7 +13,7 @@ import com.baopdh.dbserver.util.ConfigGetter;
  * @author cpu60019
  */
 public class Cache<K, V> implements IService<K, V> {
-    private static final int DEFAULT_CACHE_SIZE = 1000;
+    private static final int DEFAULT_CACHE_SIZE = 10000;
 
     IService<K, V> cacheEntity;
     

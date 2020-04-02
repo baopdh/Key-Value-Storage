@@ -5,18 +5,18 @@
  */
 package com.baopdh.dbserver.database.storage;
 
-import com.baopdh.dbserver.database.IDatabase;
 import kyotocabinet.*;
 import com.baopdh.dbserver.util.DeSerializer;
+import org.apache.thrift.TBase;
 
 /**
  *
  * @author cpu60019
  */
-public class KCDB<K, V> implements IDatabase<K, V> {
+public class KCDB<K, V extends TBase<?,?>> implements IStorage<K, V> {
     private final String dbName;
     private final DB db = new DB();
-    
+
     public KCDB(String dbName) {
         this.dbName = dbName;
     }
@@ -34,19 +34,32 @@ public class KCDB<K, V> implements IDatabase<K, V> {
     public V get(K key) {
         byte[] arr = db.get(DeSerializer.serialize(key));
 
-        Object value = null;
+        V value = null;
         DeSerializer.deserialize(value, arr);
 
-        return (V) value;
+        return value;
+    }
+
+    @SuppressWarnings("unchecked")
+    public byte[] get(byte[] key) {
+        return db.get(key);
     }
     
     @Override
     public boolean put(K key, V value) {
         return db.set(DeSerializer.serialize(key), DeSerializer.serialize(value));
     }
+
+    public boolean put(byte[] key, V value) {
+        return db.set(key, DeSerializer.serialize(value));
+    }
     
     @Override
     public boolean remove(K key) {
         return db.remove(DeSerializer.serialize(key));
+    }
+
+    public boolean remove(byte[] key) {
+        return db.remove(key);
     }
 }

@@ -5,22 +5,22 @@
  */
 package com.baopdh.dbserver.database.storage;
 
-import com.baopdh.dbserver.database.IDatabase;
 import com.baopdh.dbserver.util.ConfigGetter;
-import com.baopdh.dbserver.util.Constant;
+import com.baopdh.dbserver.util.DeSerializer;
 import com.baopdh.dbserver.util.FileUtil;
+import org.apache.thrift.TBase;
 
 /**
  *
  * @author cpu60019
  */
-public class Storage<K, V> implements IDatabase<K, V> {
+public class Storage<K, V extends TBase<?,?>> {
     private static final String FILE_FORMAT = "node%d.kch";
     private static final int DEFAULT_NUM_CLUSTER = 3;
 
     private String dbName;
     private LoadBalancer<K> loadBalancer;
-    private IDatabase<K, V>[] dbIstance;
+    private IStorage<K, V>[] dbInstance;
 
     public Storage(String dbName) {
         this.dbName = dbName;
@@ -30,7 +30,7 @@ public class Storage<K, V> implements IDatabase<K, V> {
     private void init() {
         int size = ConfigGetter.getInt("db.numcluster", DEFAULT_NUM_CLUSTER);
 
-        this.dbIstance = new KCDB[size];
+        this.dbInstance = new KCDB[size];
         this.loadBalancer = new LoadBalancer<>(size);
     }
 
@@ -42,10 +42,10 @@ public class Storage<K, V> implements IDatabase<K, V> {
             return false;
         }
 
-        for (int i = 0; i < this.dbIstance.length; ++i) {
+        for (int i = 0; i < this.dbInstance.length; ++i) {
             String nodeName = currentDir + String.format(FILE_FORMAT, i);
-            this.dbIstance[i] = new KCDB<K, V>(nodeName);
-            if (!this.dbIstance[i].open()) {
+            this.dbInstance[i] = new KCDB<K, V>(nodeName);
+            if (!this.dbInstance[i].open()) {
                 System.out.println("Open db fail: " + nodeName);
                 this.close();
                 return false;
@@ -56,26 +56,26 @@ public class Storage<K, V> implements IDatabase<K, V> {
     }
 
     public boolean close() {
-        for (int i = 0; i < this.dbIstance.length; ++i) {
-            if (this.dbIstance[i] != null)
-                this.dbIstance[i].close();
+        for (IStorage<K, V> instance: this.dbInstance) {
+            if (instance != null)
+                instance.close();
         }
 
         return true;
     }
 
-    @Override
-    public V get(K key) {
-        return this.dbIstance[loadBalancer.getDBIndex(key)].get(key);
+    public byte[] get(K key) {
+        byte[] bytes = DeSerializer.serialize(key);
+        return this.dbInstance[loadBalancer.getDBIndex(bytes)].get(bytes);
     }
-    
-    @Override
+
     public boolean put(K key, V value) {
-        return this.dbIstance[loadBalancer.getDBIndex(key)].put(key, value);
+        byte[] bytes = DeSerializer.serialize(key);
+        return this.dbInstance[loadBalancer.getDBIndex(bytes)].put(bytes, value);
     }
-    
-    @Override
+
     public boolean remove(K key) {
-        return this.dbIstance[loadBalancer.getDBIndex(key)].remove(key);
+        byte[] bytes = DeSerializer.serialize(key);
+        return this.dbInstance[loadBalancer.getDBIndex(bytes)].remove(bytes);
     }
 }

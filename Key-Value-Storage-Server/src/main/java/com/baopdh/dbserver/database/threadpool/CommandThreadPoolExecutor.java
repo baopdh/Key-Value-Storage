@@ -7,6 +7,7 @@ package com.baopdh.dbserver.database.threadpool;
 
 import com.baopdh.dbserver.database.asynctask.AsyncTask;
 import com.baopdh.dbserver.database.taskmap.TaskMap;
+import org.apache.thrift.TBase;
 
 import java.io.Serializable;
 import java.util.concurrent.BlockingQueue;
@@ -17,7 +18,7 @@ import java.util.concurrent.TimeUnit;
  *
  * @author cpu60019
  */
-public class CommandThreadPoolExecutor<K extends Serializable, V extends Serializable> extends ThreadPoolExecutor {
+public class CommandThreadPoolExecutor<K extends Serializable, V extends Serializable & TBase<?,?>> extends ThreadPoolExecutor {
     private TaskMap<K, V> taskMap;
 
     public CommandThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
@@ -34,7 +35,8 @@ public class CommandThreadPoolExecutor<K extends Serializable, V extends Seriali
         super.afterExecute(r, t);
 
         if (t != null) { // handle failed execution here
-            System.out.println("Write to disk failed");
+            System.out.println("Worker failed");
+            ((AsyncTask<K, V>) r).logWarning(); // log indicates task has error during execution
         }
 
         this.taskMap.tryRemove(((AsyncTask<K, V>) r).getKey());

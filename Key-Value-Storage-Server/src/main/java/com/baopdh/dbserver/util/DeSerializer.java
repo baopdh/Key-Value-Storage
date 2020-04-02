@@ -23,17 +23,17 @@ public class DeSerializer {
     private DeSerializer() {}
     
     public static byte[] serialize(Object obj) {
-        if (obj instanceof String) {
-            return ((String)obj).getBytes();
-        }
-
         if (obj instanceof Integer) {
             return ByteBuffer.allocate(4).putInt((int) obj).array();
         }
 
+        if (obj instanceof String) {
+            return ((String)obj).getBytes();
+        }
+
         if (obj instanceof TBase) {
             try {
-                return serializer.serialize((TBase)obj);
+                return serializer.serialize((TBase<?,?>)obj);
             } catch (TException e) {
                 e.printStackTrace();
             }
@@ -42,21 +42,14 @@ public class DeSerializer {
         return null;
     }
     
-    public static void deserialize(Object obj, byte[] binary) {
-        if (binary == null) {
+    public static void deserialize(TBase<?,?> obj, byte[] binary) {
+        if (binary == null)
             return;
-        }
 
-        if (obj instanceof String) {
-            obj = new String(binary);
-        } else if (obj instanceof Integer) {
-            ByteBuffer.wrap(binary).getInt();
-        } else if (obj instanceof TBase) {
-            try {
-                deserializer.deserialize((TBase) obj, binary);
-            } catch (TException e) {
-                e.printStackTrace();
-            }
+        try {
+            deserializer.deserialize(obj, binary);
+        } catch (TException e) {
+            e.printStackTrace();
         }
     }
 }

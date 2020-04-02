@@ -30,4 +30,15 @@ public class LoadBalancer<K> {
 
         return res % this.size;
     }
+
+    public int getDBIndex(byte[] key) {
+        int res = 0;
+
+        if (key != null)
+            res = MurmurHash3.hash32x86(key);
+        if (res < 0)
+            res = -res;
+
+        return res % this.size;
+    }
 }

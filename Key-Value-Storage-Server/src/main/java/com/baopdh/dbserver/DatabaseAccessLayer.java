@@ -9,6 +9,7 @@ import com.baopdh.dbserver.cache.Cache;
 import com.baopdh.dbserver.database.Database;
 import com.baopdh.dbserver.keygen.IntegerKeyGenerate;
 import com.baopdh.dbserver.keygen.KeyGenerate;
+import org.apache.thrift.TBase;
 
 import java.io.Serializable;
 
@@ -16,15 +17,16 @@ import java.io.Serializable;
  *
  * @author cpu60019
  */
-public class DatabaseAccessLayer<K extends Serializable, V extends Serializable> implements IService<K, V> {
-    private Cache<K, V> cache = new Cache<K, V>();
+public class DatabaseAccessLayer<K extends Serializable, V extends Serializable & TBase<?,?>> implements IService<K, V> {
+    private Cache<K, V> cache;
     private Database<K, V> database;
     private String dbName;
-    private KeyGenerate keyGenerate;
+    private KeyGenerate<?> keyGenerate;
 
-    public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType) {
-        this.database = new Database<K, V>(dbName, true);
+    public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType, Class<V> resultType) {
         this.dbName = dbName;
+        this.database = new Database<K, V>(dbName, true, resultType);
+        this.cache = new Cache<>();
         this.initKeyGen(keyType);
     }
 
@@ -33,8 +35,12 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable>
             case INT:
                 this.keyGenerate = new IntegerKeyGenerate(dbName);
                 break;
+            case STRING:
+                // init string key generate here
+                break;
         }
-        if (!this.keyGenerate.initialize())
+
+        if (this.keyGenerate == null || !this.keyGenerate.initialize())
             System.out.println("Init keygen failed");
     }
 
@@ -49,19 +55,19 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable>
 
     @Override
     public V get(K key) {
-        V value = cache.get(key);
-        if (value != null)
-            return value;
+//        V value = cache.get(key);
+//        if (value != null)
+//            return value;
 
         return database.get(key);
     }
 
     @SuppressWarnings("unchecked")
     public K put(V value) {
-        Object key = this.keyGenerate.getNext();
+        K key = (K) this.keyGenerate.getNext();
 
-        if (this.put((K) key, value))
-            return (K) key;
+        if (this.put(key, value))
+            return key;
 
         return null;
     }
@@ -69,7 +75,8 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable>
     @Override
     public boolean put(K key, V value) {
         if (database.put(key, value)) {
-            return cache.put(key, value);
+//            return cache.put(key, value);
+            return true;
         }
 
         return false;
@@ -78,7 +85,8 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable>
     @Override
     public boolean remove(K key) {
         if (database.remove(key)) {
-            return cache.remove(key);
+//            return cache.remove(key);
+            return true;
         }
 
         return false;

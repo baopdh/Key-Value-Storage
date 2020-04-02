@@ -13,10 +13,8 @@ import com.baopdh.dbserver.database.taskmap.PendingTask;
 import com.baopdh.dbserver.database.taskmap.TASK;
 import com.baopdh.dbserver.database.taskmap.TaskMap;
 import com.baopdh.dbserver.database.threadpool.CommandThreadPoolExecutor;
-import com.baopdh.dbserver.util.ConfigGetter;
-import com.baopdh.dbserver.util.Hasher;
-import com.baopdh.dbserver.util.MultipleReadWriteLog;
-import com.baopdh.dbserver.util.TransactionLog;
+import com.baopdh.dbserver.util.*;
+import org.apache.thrift.TBase;
 
 import java.io.Serializable;
 import java.util.concurrent.*;
@@ -28,9 +26,9 @@ import java.util.concurrent.locks.ReentrantReadWriteLock;
  *
  * @author cpu60019
  */
-public class Database<K extends Serializable, V extends Serializable> implements IDatabase<K, V> {
+public class Database<K extends Serializable, V extends Serializable & TBase<?,?>> implements IDatabase<K, V> {
     public static final int MUTEX_SIZE = 128; //lock concurrent taskMap operations with the same key
-    private static final int BLOCKING_QUEUE_SIZE = 1000;
+    private static final int BLOCKING_QUEUE_SIZE = 10000;
 
     private Storage<K, V> storage;
     private CommandThreadPoolExecutor<K, V> threadPoolExecutor;
@@ -41,7 +39,9 @@ public class Database<K extends Serializable, V extends Serializable> implements
 
     private TransactionLog transactionLog;
 
-    public Database(String dbName, boolean isPrestartThreads) {
+    private Class<V> resultType;
+
+    public Database(String dbName, boolean isPrestartThreads, Class<V> resultType) {
         this.storage = new Storage<K, V>(dbName);
 
         for (int i = 0; i < MUTEX_SIZE; ++i) {
@@ -53,14 +53,14 @@ public class Database<K extends Serializable, V extends Serializable> implements
         this.threadPoolExecutor.setTaskMap(this.taskMap);
 
         this.transactionLog = new TransactionLog(dbName);
+
+        this.resultType = resultType;
     }
 
     private void initThreadPool(boolean isPrestartThreads) {
         BlockingQueue<Runnable> blockingQueue =
-                new ArrayBlockingQueue<Runnable>(ConfigGetter.getInt("db.blockingqueue.size", BLOCKING_QUEUE_SIZE));
-        this.threadPoolExecutor = new CommandThreadPoolExecutor<K, V>(
-                ConfigGetter.getInt("db.pool.coresize", 50),
-                ConfigGetter.getInt("db.pool.maxsize", 100),
+                new ArrayBlockingQueue<>(ConfigGetter.getInt("db.blockingqueue.size", BLOCKING_QUEUE_SIZE));
+        this.threadPoolExecutor = new CommandThreadPoolExecutor<K, V>(1, 1,
                 ConfigGetter.getInt("db.pool.keepalive", 5000),
                 TimeUnit.MILLISECONDS,
                 blockingQueue);
@@ -101,7 +101,19 @@ public class Database<K extends Serializable, V extends Serializable> implements
             }
 
             // find in disk
-            return this.storage.get(key);
+            byte[] value = this.storage.get(key);
+
+            if (value == null)
+                return null;
+
+            try {
+                V result = this.resultType.getConstructor().newInstance();
+                DeSerializer.deserialize(result, value);
+                return result;
+            } catch (ReflectiveOperationException e) {
+                e.printStackTrace();
+                return null;
+            }
         } finally {
             multipleReadWriteLog.releaseRead();
         }
@@ -122,7 +134,7 @@ public class Database<K extends Serializable, V extends Serializable> implements
         try {
             taskMap.findAndUpdate(key, value, TASK.PUT);
 
-            AsyncTask<K, V> task = new PutTask<K, V>(key, value, this.storage);
+            AsyncTask<K, V> task = new PutTask<>(key, value, this.storage, this.transactionLog);
             try {
                 threadPoolExecutor.execute(task);
             } catch (RejectedExecutionException e) {
@@ -151,7 +163,7 @@ public class Database<K extends Serializable, V extends Serializable> implements
         try {
             taskMap.findAndUpdate(key, null, TASK.DELETE);
 
-            AsyncTask<K, V> task = new DeleteTask<K, V>(key, null, this.storage);
+            AsyncTask<K, V> task = new DeleteTask<K, V>(key, null, this.storage, this.transactionLog);
             try {
                 threadPoolExecutor.execute(task);
             } catch (RejectedExecutionException e) {
