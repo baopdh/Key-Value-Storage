@@ -55,9 +55,9 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
 
     @Override
     public V get(K key) {
-//        V value = cache.get(key);
-//        if (value != null)
-//            return value;
+        V value = cache.get(key);
+        if (value != null)
+            return value;
 
         return database.get(key);
     }
@@ -75,8 +75,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     @Override
     public boolean put(K key, V value) {
         if (database.put(key, value)) {
-//            return cache.put(key, value);
-            return true;
+            return cache.put(key, value);
         }
 
         return false;
@@ -85,8 +84,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     @Override
     public boolean remove(K key) {
         if (database.remove(key)) {
-//            return cache.remove(key);
-            return true;
+            return cache.remove(key);
         }
 
         return false;
