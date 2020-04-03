@@ -7,11 +7,15 @@ package com.baopdh.dbserver;
 
 import com.baopdh.dbserver.cache.Cache;
 import com.baopdh.dbserver.database.Database;
+import com.baopdh.dbserver.database.asynctask.WarningTask;
 import com.baopdh.dbserver.keygen.IntegerKeyGenerate;
 import com.baopdh.dbserver.keygen.KeyGenerate;
+import com.baopdh.dbserver.util.ConfigGetter;
+import com.baopdh.dbserver.util.TransactionLog;
 import org.apache.thrift.TBase;
 
 import java.io.Serializable;
+import java.util.concurrent.TimeUnit;
 
 /**
  *
@@ -22,10 +26,15 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     private Database<K, V> database;
     private String dbName;
     private KeyGenerate<?> keyGenerate;
+    private int retryTime, retryDelay;
+    private TransactionLog transactionLog;
 
     public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType, Class<V> resultType) {
+        this.retryTime = ConfigGetter.getInt("db.retry.time", 3);
+        this.retryDelay = ConfigGetter.getInt("db.retry.delay", 1);
         this.dbName = dbName;
-        this.database = new Database<K, V>(dbName, true, resultType);
+        this.transactionLog = new TransactionLog(dbName);
+        this.database = new Database<K, V>(dbName, true, transactionLog, resultType);
         this.cache = new Cache<>();
         this.initKeyGen(keyType);
     }
@@ -63,29 +72,46 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     }
 
     @SuppressWarnings("unchecked")
-    public K put(V value) {
-        K key = (K) this.keyGenerate.getNext();
-
-        if (this.put(key, value))
-            return key;
-
-        return null;
+    public K getKey() {
+        return (K) this.keyGenerate.getNext();
     }
 
     @Override
     public boolean put(K key, V value) {
-        if (database.put(key, value)) {
-            return cache.put(key, value);
+        for (int i = 0; i < this.retryTime; ++i) {
+            if (database.put(key, value)) {
+                return cache.put(key, value);
+            }
+
+            try {
+                TimeUnit.SECONDS.sleep(this.retryDelay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
         }
+
+        this.transactionLog.commit(new WarningTask<>(key, value));
 
         return false;
     }
     
     @Override
     public boolean remove(K key) {
-        if (database.remove(key)) {
-            return cache.remove(key);
+        for (int i = 0; i < this.retryTime; ++i) {
+            if (database.remove(key)) {
+                return cache.remove(key);
+            }
+
+            try {
+                TimeUnit.SECONDS.sleep(this.retryDelay);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+                break;
+            }
         }
+
+        this.transactionLog.commit(new WarningTask<>(key, null));
 
         return false;
     }

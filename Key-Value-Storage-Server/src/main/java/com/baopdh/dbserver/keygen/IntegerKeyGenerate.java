@@ -9,7 +9,6 @@ import java.util.concurrent.Semaphore;
 public class IntegerKeyGenerate extends KeyGenerate<Integer>{
     private static final String KEY_FILE_NAME = "key.auto";
 
-    private Semaphore mutex = new Semaphore(1);
     private int currentKey;
     private RandomAccessFile fileWriter;
 
@@ -75,22 +74,17 @@ public class IntegerKeyGenerate extends KeyGenerate<Integer>{
         return true;
     }
 
-    public Integer getNext() {
-        mutex.acquireUninterruptibly();
+    public synchronized Integer getNext() {
+        ++currentKey;
         try {
-            ++currentKey;
-            try {
-                this.fileWriter.seek(0);
-                this.fileWriter.write(currentKey);
-            } catch (IOException e) {
-                e.printStackTrace();
-                return -1;
-            }
-
-            return currentKey;
-        } finally {
-            mutex.release();
+            this.fileWriter.seek(0);
+            this.fileWriter.write(currentKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
         }
+
+        return currentKey;
     }
 
     public void release() {

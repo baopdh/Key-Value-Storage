@@ -8,9 +8,9 @@ import org.apache.thrift.TException;
 public class KVStoreHandler implements KVStoreService.Iface {
     private DatabaseAccessLayer<Integer, User> databaseAccessLayer;
 
-    public KVStoreHandler() {
+    public KVStoreHandler(String dbName) {
         databaseAccessLayer =
-                new DatabaseAccessLayer<>("Test", KeyGenerate.TYPE.INT, User.class);
+                new DatabaseAccessLayer<>(dbName, KeyGenerate.TYPE.INT, User.class);
         databaseAccessLayer.start();
     }
 
@@ -30,7 +30,12 @@ public class KVStoreHandler implements KVStoreService.Iface {
     }
 
     @Override
-    public int put(User user) throws TException {
-        return databaseAccessLayer.put(user);
+    public boolean put(int id, User user) throws TException {
+        return databaseAccessLayer.put(id, user);
+    }
+
+    @Override
+    public int getKey() throws TException {
+        return databaseAccessLayer.getKey();
     }
 }

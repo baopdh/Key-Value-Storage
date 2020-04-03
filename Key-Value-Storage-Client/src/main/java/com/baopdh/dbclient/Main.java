@@ -43,7 +43,8 @@ public class Main {
 
         switch (actions[i].type) {
             case PUT:
-                System.out.println("Client " + i + " put " + client.put(actions[i].user));
+                int key = client.getKey();
+                System.out.println("Client " + i + " put " + client.put(key, actions[i].user));
                 break;
             case GET:
                 User u = client.get(actions[i].id);

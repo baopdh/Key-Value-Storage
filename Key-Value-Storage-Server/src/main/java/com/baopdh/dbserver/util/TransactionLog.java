@@ -59,7 +59,7 @@ public class TransactionLog {
         return true;
     }
 
-    public boolean commit(AsyncTask task) {
+    public synchronized boolean commit(AsyncTask<?,?> task) {
         try {
             this.out.writeObject(task);
         } catch (IOException e) {

@@ -27,7 +27,7 @@ public class Main {
     public static KVStoreService.Processor<?> processor;
 
     public static void main(String[] args) {
-        kvStoreHandler = new KVStoreHandler();
+        kvStoreHandler = new KVStoreHandler("Test");
         processor = new KVStoreService.Processor<>(kvStoreHandler);
 
         try {

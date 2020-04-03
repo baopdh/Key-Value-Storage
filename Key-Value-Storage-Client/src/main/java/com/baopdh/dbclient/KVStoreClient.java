@@ -44,12 +44,21 @@ public class KVStoreClient {
         }
     }
 
-    public int put(User user) {
+    public int getKey() {
         try {
-            return client.put(user);
+            return client.getKey();
         } catch (TException e) {
             e.printStackTrace();
             return -1;
+        }
+    }
+
+    public boolean put(int id, User user) {
+        try {
+            return client.put(id, user);
+        } catch (TException e) {
+            e.printStackTrace();
+            return false;
         }
     }
 

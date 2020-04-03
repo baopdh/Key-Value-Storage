@@ -18,9 +18,6 @@ import org.apache.thrift.TBase;
 
 import java.io.Serializable;
 import java.util.concurrent.*;
-import java.util.concurrent.locks.Lock;
-import java.util.concurrent.locks.ReadWriteLock;
-import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  *
@@ -41,7 +38,7 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
 
     private Class<V> resultType;
 
-    public Database(String dbName, boolean isPrestartThreads, Class<V> resultType) {
+    public Database(String dbName, boolean isPrestartThreads, TransactionLog transactionLog, Class<V> resultType) {
         this.storage = new Storage<K, V>(dbName);
 
         for (int i = 0; i < MUTEX_SIZE; ++i) {
@@ -52,7 +49,7 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
         this.initThreadPool(isPrestartThreads);
         this.threadPoolExecutor.setTaskMap(this.taskMap);
 
-        this.transactionLog = new TransactionLog(dbName);
+        this.transactionLog = transactionLog;
 
         this.resultType = resultType;
     }
@@ -127,7 +124,7 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
 
         // if many tasks with the same key enter at the same time,
         // this lock will prevent find operation return null many times
-        // and safe concurrent modifications
+        // and ensure safe concurrent modifications
         int index = getMutexIndex(key);
         mutex[index].acquireUninterruptibly();
         // -----------------------------------

@@ -8,9 +8,20 @@ struct User {
 	3: string phone,
 }
 
+enum TASK {
+	PUT, DELETE, WARNING
+}
+
+struct Task {
+	1: int id,
+	2: User user,
+	3: TASK task
+}
+
 service KVStoreService {
 	void ping(),
 	User get(1: int id),
 	bool remove(1: int id),
-	int put(1: User user),
+	bool put(1: int id, 2: User user),
+	int getKey(),
 }

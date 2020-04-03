@@ -30,17 +30,10 @@ public class KCDB<K, V extends TBase<?,?>> implements IStorage<K, V> {
     }
     
     @Override
-    @SuppressWarnings("unchecked")
-    public V get(K key) {
-        byte[] arr = db.get(DeSerializer.serialize(key));
-
-        V value = null;
-        DeSerializer.deserialize(value, arr);
-
-        return value;
+    public V get(K key) { // Can't use this interface
+        return null;
     }
 
-    @SuppressWarnings("unchecked")
     public byte[] get(byte[] key) {
         return db.get(key);
     }
