@@ -3,21 +3,18 @@
   <component name="ChangeListManager">
     <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="">
       <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/KVStoreClient.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/KVStoreClient.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/Main.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/thrift/gen/KVStoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/thrift/gen/KVStoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/thrift/gen/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/src/main/java/com/baopdh/dbclient/thrift/gen/User.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/Main.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/Main.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/Database.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/Database.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/storage/KCDB.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/storage/KCDB.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/keygen/IntegerKeyGenerate.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/keygen/IntegerKeyGenerate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/gen/KVStoreService.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/gen/KVStoreService.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/gen/User.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/gen/User.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/handler/KVStoreHandler.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/thrift/handler/KVStoreHandler.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/AsyncTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/AsyncTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/DeleteTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/DeleteTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/PutTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/PutTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/asynctask/WarningTask.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/taskmap/PendingTask.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/taskmap/PendingTask.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/taskmap/TASK.java" beforeDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/taskmap/TaskMap.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/database/taskmap/TaskMap.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/util/TransactionLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/util/TransactionLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Thrift/kvstore.thrift" beforeDir="false" afterPath="$PROJECT_DIR$/../Thrift/kvstore.thrift" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -96,26 +93,30 @@
       <screen x="67" y="27" width="1373" height="873" />
     </state>
     <state x="561" y="175" width="374" height="575" key="#com.intellij.ide.util.MemberChooser/67.27.1373.873@67.27.1373.873" timestamp="1585898004767" />
+    <state x="486" y="211" width="524" height="502" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog" timestamp="1585906984517">
+      <screen x="67" y="27" width="1373" height="873" />
+    </state>
+    <state x="486" y="211" width="524" height="502" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/67.27.1373.873@67.27.1373.873" timestamp="1585906984517" />
     <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl" timestamp="1585899212175">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
     <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl/67.27.1373.873@67.27.1373.873" timestamp="1585899212175" />
-    <state width="1327" height="219" key="GridCell.Tab.0.bottom" timestamp="1585827463250">
+    <state width="1327" height="219" key="GridCell.Tab.0.bottom" timestamp="1585911997867">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state width="1327" height="219" key="GridCell.Tab.0.bottom/67.27.1373.873@67.27.1373.873" timestamp="1585827463250" />
-    <state width="1327" height="219" key="GridCell.Tab.0.center" timestamp="1585827463248">
+    <state width="1327" height="219" key="GridCell.Tab.0.bottom/67.27.1373.873@67.27.1373.873" timestamp="1585911997867" />
+    <state width="1327" height="219" key="GridCell.Tab.0.center" timestamp="1585911997866">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state width="1327" height="219" key="GridCell.Tab.0.center/67.27.1373.873@67.27.1373.873" timestamp="1585827463248" />
-    <state width="1327" height="219" key="GridCell.Tab.0.left" timestamp="1585827463247">
+    <state width="1327" height="219" key="GridCell.Tab.0.center/67.27.1373.873@67.27.1373.873" timestamp="1585911997866" />
+    <state width="1327" height="219" key="GridCell.Tab.0.left" timestamp="1585911997865">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state width="1327" height="219" key="GridCell.Tab.0.left/67.27.1373.873@67.27.1373.873" timestamp="1585827463247" />
-    <state width="1327" height="219" key="GridCell.Tab.0.right" timestamp="1585827463249">
+    <state width="1327" height="219" key="GridCell.Tab.0.left/67.27.1373.873@67.27.1373.873" timestamp="1585911997865" />
+    <state width="1327" height="219" key="GridCell.Tab.0.right" timestamp="1585911997866">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state width="1327" height="219" key="GridCell.Tab.0.right/67.27.1373.873@67.27.1373.873" timestamp="1585827463249" />
+    <state width="1327" height="219" key="GridCell.Tab.0.right/67.27.1373.873@67.27.1373.873" timestamp="1585911997866" />
     <state width="1327" height="272" key="GridCell.Tab.1.bottom" timestamp="1585672566815">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
@@ -140,18 +141,18 @@
       <screen x="67" y="27" width="1373" height="873" />
     </state>
     <state x="409" y="291" key="com.intellij.ide.util.TipDialog/67.27.1373.873@67.27.1373.873" timestamp="1585582881308" />
-    <state x="398" y="71" width="710" height="783" key="find.popup" timestamp="1585897015825">
+    <state x="398" y="71" width="710" height="783" key="find.popup" timestamp="1585904518370">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state x="398" y="71" width="710" height="783" key="find.popup/67.27.1373.873@67.27.1373.873" timestamp="1585897015825" />
+    <state x="398" y="71" width="710" height="783" key="find.popup/67.27.1373.873@67.27.1373.873" timestamp="1585904518370" />
     <state x="67" y="104" width="1363" height="796" key="new project wizard" timestamp="1585723502110">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
     <state x="67" y="104" width="1363" height="796" key="new project wizard/67.27.1373.873@67.27.1373.873" timestamp="1585723502110" />
-    <state x="417" y="208" key="run.anything.popup" timestamp="1585587714999">
+    <state x="417" y="208" key="run.anything.popup" timestamp="1585903985912">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state x="417" y="208" key="run.anything.popup/67.27.1373.873@67.27.1373.873" timestamp="1585587714999" />
+    <state x="417" y="208" key="run.anything.popup/67.27.1373.873@67.27.1373.873" timestamp="1585903985912" />
     <state x="416" y="212" key="search.everywhere.popup" timestamp="1585821978903">
       <screen x="67" y="27" width="1373" height="873" />
     </state>

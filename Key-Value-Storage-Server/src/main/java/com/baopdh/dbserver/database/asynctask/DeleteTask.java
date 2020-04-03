@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @author cpu60019
  */
-public class DeleteTask<K extends Serializable, V extends Serializable & TBase<?,?>> extends AsyncTask<K, V> {
+public class DeleteTask<K, V extends Serializable & TBase<?,?>> extends AsyncTask<K, V> {
     public DeleteTask(K key, V value, Storage<K, V> storage, TransactionLog transactionLog) {
         super(key, value, storage, transactionLog);
     }

@@ -6,7 +6,7 @@
 package com.baopdh.dbserver.database.taskmap;
 
 import com.baopdh.dbserver.database.Database;
-import com.baopdh.dbserver.util.Hasher;
+import com.baopdh.dbserver.thrift.gen.TASK;
 
 import java.util.HashMap;
 import java.util.Map;

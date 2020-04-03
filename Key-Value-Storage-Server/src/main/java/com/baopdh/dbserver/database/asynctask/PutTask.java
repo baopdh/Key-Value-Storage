@@ -15,7 +15,7 @@ import java.io.Serializable;
  *
  * @author cpu60019
  */
-public class PutTask<K extends Serializable, V extends Serializable & TBase<?,?>> extends AsyncTask<K, V> {
+public class PutTask<K, V extends Serializable & TBase<?,?>> extends AsyncTask<K, V> {
     public PutTask(K key, V value, Storage<K, V> storage, TransactionLog transactionLog) {
         super(key, value, storage, transactionLog);
     }

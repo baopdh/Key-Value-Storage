@@ -7,9 +7,11 @@ package com.baopdh.dbserver;
 
 import com.baopdh.dbserver.cache.Cache;
 import com.baopdh.dbserver.database.Database;
-import com.baopdh.dbserver.database.asynctask.WarningTask;
 import com.baopdh.dbserver.keygen.IntegerKeyGenerate;
 import com.baopdh.dbserver.keygen.KeyGenerate;
+import com.baopdh.dbserver.thrift.gen.TASK;
+import com.baopdh.dbserver.thrift.gen.Task;
+import com.baopdh.dbserver.thrift.gen.User;
 import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.dbserver.util.TransactionLog;
 import org.apache.thrift.TBase;
@@ -28,6 +30,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     private KeyGenerate<?> keyGenerate;
     private int retryTime, retryDelay;
     private TransactionLog transactionLog;
+    private Class<V> resultType;
 
     public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType, Class<V> resultType) {
         this.retryTime = ConfigGetter.getInt("db.retry.time", 3);
@@ -37,6 +40,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
         this.database = new Database<K, V>(dbName, true, transactionLog, resultType);
         this.cache = new Cache<>();
         this.initKeyGen(keyType);
+        this.resultType = resultType;
     }
 
     private void initKeyGen(KeyGenerate.TYPE keyType) {
@@ -54,12 +58,12 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     }
 
     public boolean start() {
-        return database.open();
+        return database.open() && this.transactionLog.start();
     }
 
     public boolean stop() {
         keyGenerate.release();
-        return database.close();
+        return database.close() && this.transactionLog.end();
     }
 
     @Override
@@ -91,7 +95,8 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
             }
         }
 
-        this.transactionLog.commit(new WarningTask<>(key, value));
+        // hard cast, no good
+        this.transactionLog.commit(new Task((int)key, (User) value, TASK.WARNING));
 
         return false;
     }
@@ -111,7 +116,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
             }
         }
 
-        this.transactionLog.commit(new WarningTask<>(key, null));
+        this.transactionLog.commit(new Task((int)key, null, TASK.WARNING));
 
         return false;
     }

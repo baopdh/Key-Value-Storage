@@ -10,9 +10,11 @@ import com.baopdh.dbserver.database.asynctask.DeleteTask;
 import com.baopdh.dbserver.database.asynctask.PutTask;
 import com.baopdh.dbserver.database.storage.Storage;
 import com.baopdh.dbserver.database.taskmap.PendingTask;
-import com.baopdh.dbserver.database.taskmap.TASK;
 import com.baopdh.dbserver.database.taskmap.TaskMap;
 import com.baopdh.dbserver.database.threadpool.CommandThreadPoolExecutor;
+import com.baopdh.dbserver.thrift.gen.TASK;
+import com.baopdh.dbserver.thrift.gen.Task;
+import com.baopdh.dbserver.thrift.gen.User;
 import com.baopdh.dbserver.util.*;
 import org.apache.thrift.TBase;
 
@@ -73,12 +75,12 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
 
     @Override
     public boolean open() {
-        return this.storage.open() && this.transactionLog.start();
+        return this.storage.open();
     }
 
     @Override
     public boolean close() {
-        return this.storage.close() && this.transactionLog.end();
+        return this.storage.close();
     }
 
     @Override
@@ -142,7 +144,7 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
             }
 
             // write log
-            return this.transactionLog.commit(task);
+            return this.transactionLog.commit(new Task((int)key, (User)value, TASK.PUT));
         } finally {
             mutex[index].release();
             multipleReadWriteLog.releaseWrite();
@@ -171,7 +173,7 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
             }
 
             // write log
-            return this.transactionLog.commit(task);
+            return this.transactionLog.commit(new Task((int)key, null, TASK.DELETE));
         } finally {
             mutex[index].release();
             multipleReadWriteLog.releaseWrite();
