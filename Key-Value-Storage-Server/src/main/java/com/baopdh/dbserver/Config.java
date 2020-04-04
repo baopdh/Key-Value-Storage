@@ -18,7 +18,9 @@ public class Config {
     private static final String FILE_CONFIG = "/resources/config.properties";
     private final Properties properties = new Properties();
     private static Config instance = null;
-    
+
+    private Config() {}
+
     public static Config getInstance() {
         if (instance == null) {
             instance = new Config();

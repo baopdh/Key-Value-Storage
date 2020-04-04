@@ -18,7 +18,7 @@ public class Cache<K, V> implements IService<K, V> {
     IService<K, V> cacheEntity;
     
     public Cache() {
-        this.cacheEntity = new LRUCache<K, V>(ConfigGetter.getInt("db.cache.size", DEFAULT_CACHE_SIZE));
+        this.cacheEntity = new LRUCache<>(ConfigGetter.getInt("db.cache.size", DEFAULT_CACHE_SIZE));
     }
     
     public Cache(IService<K, V> cache) {

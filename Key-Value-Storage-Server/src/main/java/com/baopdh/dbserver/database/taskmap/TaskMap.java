@@ -17,7 +17,7 @@ import java.util.concurrent.Semaphore;
  * @author cpu60019
  */
 public class TaskMap<K, V> {
-    private final Map<K, PendingTask<V>> tasks = new HashMap<K, PendingTask<V>>();
+    private final Map<K, PendingTask<V>> tasks = new HashMap<>();
     private Semaphore[] mutex;
 
     public TaskMap(Semaphore[] mutex) {

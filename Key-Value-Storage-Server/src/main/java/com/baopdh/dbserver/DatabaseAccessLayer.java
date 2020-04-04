@@ -13,24 +13,24 @@ import com.baopdh.dbserver.thrift.gen.TASK;
 import com.baopdh.dbserver.thrift.gen.Task;
 import com.baopdh.dbserver.thrift.gen.User;
 import com.baopdh.dbserver.util.ConfigGetter;
-import com.baopdh.dbserver.util.TransactionLog;
+import com.baopdh.dbserver.logger.TransactionLog;
+import com.baopdh.dbserver.util.DeSerializer;
 import org.apache.thrift.TBase;
 
-import java.io.Serializable;
+import java.nio.ByteBuffer;
 import java.util.concurrent.TimeUnit;
 
 /**
  *
  * @author cpu60019
  */
-public class DatabaseAccessLayer<K extends Serializable, V extends Serializable & TBase<?,?>> implements IService<K, V> {
+public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K, V> {
     private Cache<K, V> cache;
     private Database<K, V> database;
     private String dbName;
     private KeyGenerate<?> keyGenerate;
     private int retryTime, retryDelay;
     private TransactionLog transactionLog;
-    private Class<V> resultType;
 
     public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType, Class<V> resultType) {
         this.retryTime = ConfigGetter.getInt("db.retry.time", 3);
@@ -40,7 +40,6 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
         this.database = new Database<K, V>(dbName, true, transactionLog, resultType);
         this.cache = new Cache<>();
         this.initKeyGen(keyType);
-        this.resultType = resultType;
     }
 
     private void initKeyGen(KeyGenerate.TYPE keyType) {
@@ -84,6 +83,8 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     public boolean put(K key, V value) {
         for (int i = 0; i < this.retryTime; ++i) {
             if (database.put(key, value)) {
+                this.transactionLog.commit(
+                        new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.PUT));
                 return cache.put(key, value);
             }
 
@@ -95,9 +96,8 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
             }
         }
 
-        // hard cast, no good
-        this.transactionLog.commit(new Task((int)key, (User) value, TASK.WARNING));
-
+        this.transactionLog.commit(
+                new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.WARNING));
         return false;
     }
     
@@ -105,6 +105,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
     public boolean remove(K key) {
         for (int i = 0; i < this.retryTime; ++i) {
             if (database.remove(key)) {
+                this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.DELETE));
                 return cache.remove(key);
             }
 
@@ -116,8 +117,7 @@ public class DatabaseAccessLayer<K extends Serializable, V extends Serializable 
             }
         }
 
-        this.transactionLog.commit(new Task((int)key, null, TASK.WARNING));
-
+        this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.WARNING));
         return false;
     }
 }

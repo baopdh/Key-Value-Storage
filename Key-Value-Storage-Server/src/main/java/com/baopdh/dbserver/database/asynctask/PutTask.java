@@ -6,22 +6,18 @@
 package com.baopdh.dbserver.database.asynctask;
 
 import com.baopdh.dbserver.database.storage.Storage;
-import com.baopdh.dbserver.util.TransactionLog;
-import org.apache.thrift.TBase;
-
-import java.io.Serializable;
 
 /**
  *
  * @author cpu60019
  */
-public class PutTask<K, V extends Serializable & TBase<?,?>> extends AsyncTask<K, V> {
-    public PutTask(K key, V value, Storage<K, V> storage, TransactionLog transactionLog) {
-        super(key, value, storage, transactionLog);
+public class PutTask<K> extends AsyncTask<K> {
+    public PutTask(K key, byte[] keyBytes, byte[] valueBytes, Storage storage) {
+        super(key, keyBytes, valueBytes, storage);
     }
 
     @Override
     public void run() {
-        this.storage.put(key, value);
+        this.storage.put(keyBytes, valueBytes);
     }
 }

@@ -12,24 +12,22 @@ import com.baopdh.dbserver.database.storage.Storage;
 import com.baopdh.dbserver.database.taskmap.PendingTask;
 import com.baopdh.dbserver.database.taskmap.TaskMap;
 import com.baopdh.dbserver.database.threadpool.CommandThreadPoolExecutor;
+import com.baopdh.dbserver.logger.TransactionLog;
 import com.baopdh.dbserver.thrift.gen.TASK;
-import com.baopdh.dbserver.thrift.gen.Task;
-import com.baopdh.dbserver.thrift.gen.User;
 import com.baopdh.dbserver.util.*;
 import org.apache.thrift.TBase;
 
-import java.io.Serializable;
 import java.util.concurrent.*;
 
 /**
  *
  * @author cpu60019
  */
-public class Database<K extends Serializable, V extends Serializable & TBase<?,?>> implements IDatabase<K, V> {
+public class Database<K, V extends TBase<?,?>> implements IDatabase<K, V> {
     public static final int MUTEX_SIZE = 128; //lock concurrent taskMap operations with the same key
     private static final int BLOCKING_QUEUE_SIZE = 10000;
 
-    private Storage<K, V> storage;
+    private Storage storage;
     private CommandThreadPoolExecutor<K, V> threadPoolExecutor;
     private TaskMap<K, V> taskMap;
 
@@ -37,16 +35,16 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
     private final MultipleReadWriteLog multipleReadWriteLog = new MultipleReadWriteLog();
 
     private TransactionLog transactionLog;
-
     private Class<V> resultType;
 
     public Database(String dbName, boolean isPrestartThreads, TransactionLog transactionLog, Class<V> resultType) {
-        this.storage = new Storage<K, V>(dbName);
+        this.storage = new Storage(dbName);
 
         for (int i = 0; i < MUTEX_SIZE; ++i) {
             mutex[i] = new Semaphore(1);
         }
-        this.taskMap = new TaskMap<K, V>(this.mutex);
+
+        this.taskMap = new TaskMap<>(this.mutex);
 
         this.initThreadPool(isPrestartThreads);
         this.threadPoolExecutor.setTaskMap(this.taskMap);
@@ -100,7 +98,7 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
             }
 
             // find in disk
-            byte[] value = this.storage.get(key);
+            byte[] value = this.storage.get(DeSerializer.serialize(key));
 
             if (value == null)
                 return null;
@@ -133,18 +131,15 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
         try {
             taskMap.findAndUpdate(key, value, TASK.PUT);
 
-            AsyncTask<K, V> task = new PutTask<>(key, value, this.storage, this.transactionLog);
+            AsyncTask<K> task = new PutTask<>(key, DeSerializer.serialize(key), DeSerializer.serialize(value), this.storage);
             try {
                 threadPoolExecutor.execute(task);
             } catch (RejectedExecutionException e) {
-                // roll back
-                taskMap.rollBack(key);
-
+                taskMap.rollBack(key); // roll back
                 return false;
             }
 
-            // write log
-            return this.transactionLog.commit(new Task((int)key, (User)value, TASK.PUT));
+            return true;
         } finally {
             mutex[index].release();
             multipleReadWriteLog.releaseWrite();
@@ -162,18 +157,15 @@ public class Database<K extends Serializable, V extends Serializable & TBase<?,?
         try {
             taskMap.findAndUpdate(key, null, TASK.DELETE);
 
-            AsyncTask<K, V> task = new DeleteTask<K, V>(key, null, this.storage, this.transactionLog);
+            AsyncTask<K> task = new DeleteTask<>(key, DeSerializer.serialize(key), null, this.storage);
             try {
                 threadPoolExecutor.execute(task);
             } catch (RejectedExecutionException e) {
-                // roll back
-                taskMap.rollBack(key);
-
+                taskMap.rollBack(key); // roll back
                 return false;
             }
 
-            // write log
-            return this.transactionLog.commit(new Task((int)key, null, TASK.DELETE));
+            return true;
         } finally {
             mutex[index].release();
             multipleReadWriteLog.releaseWrite();

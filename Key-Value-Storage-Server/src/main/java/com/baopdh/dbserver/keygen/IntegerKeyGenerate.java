@@ -16,6 +16,48 @@ public class IntegerKeyGenerate extends KeyGenerate<Integer>{
         super(dbName);
     }
 
+    public boolean initialize() {
+        String dirUrl = FileUtil.getDBUrl(this.dbName) + "intkey" + Constant.FILE_URL_DELIMITER;
+
+        if (!FileUtil.makeDirIfNotExist(dirUrl)) {
+            System.out.println("Make directory failed: " + dirUrl);
+            return false;
+        }
+
+        if (!this.readCurrentKey(dirUrl + KEY_FILE_NAME)) {
+            System.out.println("Get current key failed");
+            return false;
+        }
+
+        if (!this.openFileForWrite(dirUrl + KEY_FILE_NAME)) {
+            System.out.println("Open key file failed");
+            return false;
+        }
+
+        return true;
+    }
+
+    public synchronized Integer getNext() {
+        ++currentKey;
+        try {
+            this.fileWriter.seek(0);
+            this.fileWriter.write(currentKey);
+        } catch (IOException e) {
+            e.printStackTrace();
+            return -1;
+        }
+
+        return currentKey;
+    }
+
+    public void release() {
+        try {
+            this.fileWriter.close();
+        } catch(IOException e) {
+            e.printStackTrace();
+        }
+    }
+
     private boolean readCurrentKey(String fileUrl) {
         boolean result = true;
         try {
@@ -51,47 +93,5 @@ public class IntegerKeyGenerate extends KeyGenerate<Integer>{
         }
 
         return true;
-    }
-
-    public boolean initialize() {
-        String dirUrl = FileUtil.getDBUrl(this.dbName) + "intkey" + Constant.FILE_URL_DELIMITER;
-
-        if (!FileUtil.makeDirIfNotExist(dirUrl)) {
-            System.out.println("Make directory failed: " + dirUrl);
-            return false;
-        }
-
-        if (!this.readCurrentKey(dirUrl + KEY_FILE_NAME)) {
-            System.out.println("No file for read key");
-            return false;
-        }
-
-        if (!this.openFileForWrite(dirUrl + KEY_FILE_NAME)) {
-            System.out.println("Open key file failed");
-            return false;
-        }
-
-        return true;
-    }
-
-    public synchronized Integer getNext() {
-        ++currentKey;
-        try {
-            this.fileWriter.seek(0);
-            this.fileWriter.write(currentKey);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return -1;
-        }
-
-        return currentKey;
-    }
-
-    public void release() {
-        try {
-            this.fileWriter.close();
-        } catch(IOException e) {
-            e.printStackTrace();
-        }
     }
 }

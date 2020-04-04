@@ -1,9 +1,9 @@
 package com.baopdh.dbserver.database.storage;
 
-import com.baopdh.dbserver.database.IDatabase;
-
-public interface IStorage<K, V> extends IDatabase<K, V> {
-    public byte[] get(byte[] key);
-    public boolean put(byte[] key, V value);
-    public boolean remove(byte[] key);
+public interface IStorage {
+    byte[] get(byte[] key);
+    boolean put(byte[] key, byte[] value);
+    boolean remove(byte[] key);
+    boolean open();
+    boolean close();
 }

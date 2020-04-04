@@ -1,26 +1,36 @@
-package com.baopdh.dbserver.util;
+package com.baopdh.dbserver.logger;
 
 import com.baopdh.dbserver.thrift.gen.Task;
+import com.baopdh.dbserver.util.ConfigGetter;
+import com.baopdh.dbserver.util.Constant;
+import com.baopdh.dbserver.util.DeSerializer;
+import com.baopdh.dbserver.util.FileUtil;
 
 import java.io.*;
 import java.time.LocalDate;
+import java.util.concurrent.Semaphore;
 
 public class TransactionLog {
-    private static final int MAX_FILE_SIZE = 1000000;
+    private static final int FILE_SIZE_LIMIT = ConfigGetter.getInt("database.log.file.max-size", 1000000);
     private static final String ID_FILE = "id.auto";
 
-    private final int FILE_SIZE_LIMIT = ConfigGetter.getInt("database.log.file.max-size", MAX_FILE_SIZE);
     private String dbName;
     private String directory;
     private long curFileSize = 0;
     private int curFileId = 0;
     private FileOutputStream out;
+    private Scheduler scheduler;
+
+    private final Semaphore mutex = new Semaphore(1);
 
     public  TransactionLog(String dbName) {
         this.dbName = dbName;
+        this.scheduler = new Scheduler(24 * 60, 0, 5, 0, Scheduler.UNIT.MINTUE);
     }
 
     public boolean start() {
+        this.startScheduler();
+
         if (!this.makeDirectory(this.getFolderName()))
             return false;
 
@@ -41,25 +51,55 @@ public class TransactionLog {
         return true;
     }
 
-    public synchronized boolean commit(Task task) {
-        byte[] arr = DeSerializer.serialize(task);
-
-        if (arr.length + curFileSize > FILE_SIZE_LIMIT) {
-            this.end();
-            this.increaseFileId(this.directory + Constant.FILE_URL_DELIMITER + ID_FILE);
-            this.openLogFile();
-        }
-
+    public boolean commit(Task task) {
+        mutex.acquireUninterruptibly();
         try {
-            curFileSize += arr.length;
-            this.out.write(DeSerializer.serialize(arr.length));
-            this.out.write(arr);
-        } catch (IOException e) {
-            e.printStackTrace();
-            return false;
+            byte[] arr = DeSerializer.serialize(task);
+
+            if (arr.length + curFileSize > FILE_SIZE_LIMIT) {
+                rollBySize();
+            }
+
+            try {
+                curFileSize += arr.length;
+                this.out.write(DeSerializer.serialize(arr.length));
+                this.out.write(arr);
+            } catch (IOException e) {
+                e.printStackTrace();
+                return false;
+            }
+
+            return true;
+        } finally {
+            mutex.release();
         }
 
-        return true;
+    }
+
+    private boolean rollBySize() {
+        return this.end() && this.increaseFileId() && this.openLogFile();
+    }
+
+    private boolean rollByDate() {
+        mutex.acquireUninterruptibly();
+        try {
+            this.end();
+            this.curFileId = 0;
+
+            if (!this.makeDirectory(getFolderName())) {
+                System.out.println("Roll by date failed");
+                return false;
+            }
+
+            return this.openLogFile();
+        } finally {
+            mutex.release();
+        }
+    }
+
+    private void startScheduler() {
+        Runnable runnable = TransactionLog.this::rollByDate;
+        scheduler.start(runnable);
     }
 
     private boolean makeDirectory(String folder) {
@@ -67,15 +107,18 @@ public class TransactionLog {
         return FileUtil.makeDirIfNotExist(this.directory);
     }
 
-    private void increaseFileId(String fileUrl) {
+    private boolean increaseFileId() {
         ++this.curFileId;
 
-        try (RandomAccessFile file = new RandomAccessFile(fileUrl, "rw")) {
+        try (RandomAccessFile file = new RandomAccessFile(this.directory + Constant.FILE_URL_DELIMITER + ID_FILE, "rw")) {
             file.seek(0);
             file.write(this.curFileId);
         } catch (IOException e) {
             e.printStackTrace();
+            return false;
         }
+
+        return true;
     }
 
     private boolean openLogFile() {
@@ -122,13 +165,3 @@ public class TransactionLog {
         return result;
     }
 }
-
-// This class is used for appending serialized object to an existing file, but no need anymore, just leave it here
-//class AppendingObjectOutputStream extends ObjectOutputStream {
-//    public AppendingObjectOutputStream(OutputStream outputStream) throws IOException {
-//        super(outputStream);
-//    }
-//
-//    @Override
-//    protected void writeStreamHeader() throws IOException {}
-//}

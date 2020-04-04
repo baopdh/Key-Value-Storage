@@ -6,21 +6,19 @@
 package com.baopdh.dbserver.database.storage;
 
 import com.baopdh.dbserver.util.ConfigGetter;
-import com.baopdh.dbserver.util.DeSerializer;
 import com.baopdh.dbserver.util.FileUtil;
-import org.apache.thrift.TBase;
 
 /**
  *
  * @author cpu60019
  */
-public class Storage<K, V extends TBase<?,?>> {
+public class Storage implements IStorage {
     private static final String FILE_FORMAT = "node%d.kch";
-    private static final int DEFAULT_NUM_CLUSTER = 3;
+    private static final int DEFAULT_NUM_CLUSTER = 5;
 
     private String dbName;
-    private LoadBalancer<K> loadBalancer;
-    private IStorage<K, V>[] dbInstance;
+    private LoadBalancer loadBalancer;
+    private IStorage[] dbInstance;
 
     public Storage(String dbName) {
         this.dbName = dbName;
@@ -31,9 +29,10 @@ public class Storage<K, V extends TBase<?,?>> {
         int size = ConfigGetter.getInt("db.numcluster", DEFAULT_NUM_CLUSTER);
 
         this.dbInstance = new KCDB[size];
-        this.loadBalancer = new LoadBalancer<>(size);
+        this.loadBalancer = new LoadBalancer(size);
     }
 
+    @Override
     public boolean open() {
         String currentDir = FileUtil.getDBUrl(this.dbName);
 
@@ -44,7 +43,7 @@ public class Storage<K, V extends TBase<?,?>> {
 
         for (int i = 0; i < this.dbInstance.length; ++i) {
             String nodeName = currentDir + String.format(FILE_FORMAT, i);
-            this.dbInstance[i] = new KCDB<K, V>(nodeName);
+            this.dbInstance[i] = new KCDB(nodeName);
             if (!this.dbInstance[i].open()) {
                 System.out.println("Open db fail: " + nodeName);
                 this.close();
@@ -55,8 +54,9 @@ public class Storage<K, V extends TBase<?,?>> {
         return true;
     }
 
+    @Override
     public boolean close() {
-        for (IStorage<K, V> instance: this.dbInstance) {
+        for (IStorage instance: this.dbInstance) {
             if (instance != null)
                 instance.close();
         }
@@ -64,18 +64,18 @@ public class Storage<K, V extends TBase<?,?>> {
         return true;
     }
 
-    public byte[] get(K key) {
-        byte[] bytes = DeSerializer.serialize(key);
-        return this.dbInstance[loadBalancer.getDBIndex(bytes)].get(bytes);
+    @Override
+    public byte[] get(byte[] key) {
+        return this.dbInstance[loadBalancer.getDBIndex(key)].get(key);
     }
 
-    public boolean put(K key, V value) {
-        byte[] bytes = DeSerializer.serialize(key);
-        return this.dbInstance[loadBalancer.getDBIndex(bytes)].put(bytes, value);
+    @Override
+    public boolean put(byte[] key, byte[] value) {
+        return this.dbInstance[loadBalancer.getDBIndex(key)].put(key, value);
     }
 
-    public boolean remove(K key) {
-        byte[] bytes = DeSerializer.serialize(key);
-        return this.dbInstance[loadBalancer.getDBIndex(bytes)].remove(bytes);
+    @Override
+    public boolean remove(byte[] key) {
+        return this.dbInstance[loadBalancer.getDBIndex(key)].remove(key);
     }
 }

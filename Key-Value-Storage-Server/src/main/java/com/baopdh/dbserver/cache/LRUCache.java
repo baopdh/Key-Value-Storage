@@ -31,10 +31,10 @@ public class LRUCache<K, V> implements IService<K, V> {
         }
     }
 
-    private final Map<K, Node> hMap = new HashMap<K, Node>();
+    private final Map<K, Node> hMap = new HashMap<>();
     private Node head = null; // least recently used
     private Node tail = null; // most recently used
-    private int size, numItems = 0;
+    private int size;
     
     private final ReadWriteLock lock = new ReentrantReadWriteLock(); // semaphore
     private final Lock writeLock = lock.writeLock();
@@ -47,6 +47,9 @@ public class LRUCache<K, V> implements IService<K, V> {
     }
     
     private void addNode(Node node) {
+        // add new node to map
+        this.hMap.put(node.key, node);
+
         // add new node to tail
         if (this.tail == null) {
             this.head = node;
@@ -57,10 +60,7 @@ public class LRUCache<K, V> implements IService<K, V> {
             this.tail = node;
         }
 
-        // add new node to map
-        this.hMap.put(node.key, node);
-        
-        ++this.numItems;
+        --this.size;
     }
     
     private void deleteNode(Node node) {
@@ -85,7 +85,7 @@ public class LRUCache<K, V> implements IService<K, V> {
         }
         //-----------------------------
         
-        --this.numItems;
+        ++this.size;
     }
     
     private synchronized void moveToTail(Node node) {
@@ -117,7 +117,7 @@ public class LRUCache<K, V> implements IService<K, V> {
             if (node == null) { // if key not exist
                 node = new Node(key, value);
                 // remove least recently used item if no more capacity
-                if (this.numItems == this.size) {
+                if (this.size == 0) {
                     hMap.remove(this.head.key);
                     this.deleteNode(this.head);
                 }
@@ -169,14 +169,4 @@ public class LRUCache<K, V> implements IService<K, V> {
             writeLock.unlock();
         }
     }
-    
-    public void print() {
-        Node p = this.head;
-        while (p != null) {
-            System.out.print(p.key + " ");
-            p = p.next;
-        }
-        System.out.println();
-    }
-    
 }

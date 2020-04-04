@@ -13,8 +13,8 @@ enum TASK {
 }
 
 struct Task {
-	1: int id,
-	2: User user,
+	1: binary key,
+	2: binary value,
 	3: TASK task
 }
 
