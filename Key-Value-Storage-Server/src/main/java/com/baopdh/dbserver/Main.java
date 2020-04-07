@@ -6,6 +6,7 @@
 package com.baopdh.dbserver;
 
 import com.baopdh.dbserver.keygen.KeyGenerate;
+import com.baopdh.dbserver.profiler.ProfilerServer;
 import com.baopdh.dbserver.thrift.gen.KVStoreService;
 import com.baopdh.dbserver.thrift.gen.User;
 import com.baopdh.dbserver.thrift.handler.KVStoreHandler;
@@ -26,6 +27,12 @@ public class Main {
     public static KVStoreService.Processor<?> processor;
 
     public static void main(String[] args) {
+        ProfilerServer profilerServer = new ProfilerServer();
+        if (!profilerServer.start())
+            System.out.println("Profiler server failed to start");
+        else
+            System.out.println("Start profiler server");
+
         kvStoreHandler = new KVStoreHandler("Test");
         processor = new KVStoreService.Processor<>(kvStoreHandler);
 
@@ -35,7 +42,7 @@ public class Main {
             // Use this for a multithreaded server
              TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
 
-            System.out.println("Starting the simple server...");
+            System.out.println("Starting the database server...");
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
