@@ -25,12 +25,12 @@ import java.util.concurrent.TimeUnit;
  * @author cpu60019
  */
 public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K, V> {
-    private Cache<K, V> cache;
-    private Database<K, V> database;
-    private String dbName;
+    private final Cache<K, V> cache;
+    private final Database<K, V> database;
+    private final String dbName;
     private KeyGenerate<?> keyGenerate;
-    private int retryTime, retryDelay;
-    private TransactionLog transactionLog;
+    private final int retryTime, retryDelay;
+    private final TransactionLog transactionLog;
 
     public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType, Class<V> resultType) {
         this.retryTime = ConfigGetter.getInt("db.retry.time", 3);

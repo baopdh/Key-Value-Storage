@@ -27,12 +27,14 @@ public class Main {
     public static KVStoreService.Processor<?> processor;
 
     public static void main(String[] args) {
+        // start http profiler server
         ProfilerServer profilerServer = new ProfilerServer();
         if (!profilerServer.start())
             System.out.println("Profiler server failed to start");
         else
             System.out.println("Start profiler server");
 
+        // start thrift database server
         kvStoreHandler = new KVStoreHandler("Test");
         processor = new KVStoreService.Processor<>(kvStoreHandler);
 

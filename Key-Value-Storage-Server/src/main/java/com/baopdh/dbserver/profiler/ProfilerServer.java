@@ -38,7 +38,7 @@ public class ProfilerServer {
     private void createServer(int port) {
         this.server = new Server(port);
         WebAppContext ctx = new WebAppContext();
-        ctx.setResourceBase("src/main/jsp");
+        ctx.setResourceBase("src/main/webapp");
         ctx.setContextPath("/");
 
         // Including the JSTL jars for the webapp.

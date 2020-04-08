@@ -2,7 +2,7 @@ package com.baopdh.dbserver.profiler;
 
 import java.util.Iterator;
 
-public class ApiList implements Iterable<ApiStat>{
+public class ApiList implements Iterable<ApiStat> {
     public enum API {
         PUT(0), GET(1), DELETE(2);
         public static final int length = API.values().length;
@@ -32,6 +32,14 @@ public class ApiList implements Iterable<ApiStat>{
         }
 
         return instance;
+    }
+
+    public void addPendingRequest(API api) {
+        list[api.getCode()].addPendingRequest();
+    }
+
+    public void saveNewRequest(API api, long l) {
+        list[api.getCode()].saveNewRequest(l);
     }
 
     @Override

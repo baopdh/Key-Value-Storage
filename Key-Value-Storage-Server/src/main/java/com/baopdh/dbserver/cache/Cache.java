@@ -27,19 +27,16 @@ public class Cache<K, V> implements IService<K, V> {
     
     @Override
     public V get(K key) {
-        System.out.println("cache get " + key);
         return this.cacheEntity.get(key);
     }
     
     @Override
     public boolean put(K key, V value) {
-        System.out.println("cache put " + key);
         return this.cacheEntity.put(key, value);
     }
     
     @Override
     public boolean remove(K key) {
-        System.out.println("cache delete " + key);
         return this.cacheEntity.remove(key);
     }
 }

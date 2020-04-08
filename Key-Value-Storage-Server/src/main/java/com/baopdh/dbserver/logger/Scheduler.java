@@ -11,10 +11,10 @@ public class Scheduler {
         HOUR, MINTUE, SECOND
     }
 
-    private long interval;
-    private int startHour, startMinute, startSecond;
-    private ChronoUnit chronoUnit;
-    private TimeUnit timeUnit;
+    private final long interval;
+    private final int startHour, startMinute, startSecond;
+    private final ChronoUnit chronoUnit;
+    private final TimeUnit timeUnit;
     private final ScheduledExecutorService scheduler = Executors.newScheduledThreadPool(1);
 
     public Scheduler(long interval, int startHour, int startMinute, int startSecond, UNIT unit) {
