@@ -5,59 +5,53 @@
  */
 package com.baopdh.dbserver.database.taskmap;
 
-import com.baopdh.dbserver.database.Database;
+import com.baopdh.dbserver.cache.LRUCache;
+import com.baopdh.dbserver.database.asynctask.AsyncTask;
+import com.baopdh.dbserver.database.threadpool.CommandThreadPoolExecutor;
 import com.baopdh.dbserver.thrift.gen.TASK;
+import com.baopdh.dbserver.util.ConfigGetter;
+import org.apache.thrift.TBase;
 
-import java.util.HashMap;
-import java.util.Map;
-import java.util.concurrent.Semaphore;
+import java.util.concurrent.*;
 
 /**
  *
  * @author cpu60019
  */
-public class TaskMap<K, V> {
-    private final Map<K, PendingTask<V>> tasks = new HashMap<>();
-    private Semaphore[] mutex;
+public class TaskMap<K, V extends TBase<?,?>> extends LRUCache<K, PendingTask<V>> {
+    private static final int BLOCKING_QUEUE_SIZE = 10000;
 
-    public TaskMap(Semaphore[] mutex) {
-        this.mutex = mutex;
+    private CommandThreadPoolExecutor<K, V> threadPoolExecutor;
+
+    public TaskMap(boolean isPrestartThreads) {
+        super(BLOCKING_QUEUE_SIZE);
+        this.initThreadPool(isPrestartThreads);
     }
 
     public PendingTask<V> find(K key) {
-        return this.tasks.get(key);
+        return super.get(key);
     }
 
-    public void tryRemove(K key) {
-        // if this thread satisfy remove condition but not execute remove yet
-        // in the meantime a task with the same key update
-        // os switch back and remove so use this lock
-        int index = Database.getMutexIndex(key);
-        mutex[index].acquireUninterruptibly();
-        // -----------------------------------
-
-        PendingTask<V> pTask = this.find(key);
-        if (pTask.downCountAndGet() == 0) // if this is the last task with same key
-            this.tasks.remove(key);
-
-        mutex[index].release();
-    }
-
-    public void findAndUpdate(K key, V value, TASK type) {
-        PendingTask<V> pTask = this.find(key);
-
-        if (pTask != null) {
-            pTask.updateTask(type, value);
-        } else {
-            this.tasks.put(key, new PendingTask<V>(type, value));
+    public boolean put(K key, V value, TASK type, AsyncTask<K> task) {
+        try {
+            threadPoolExecutor.execute(task);
+            super.put(key, new PendingTask<>(type, value));
+        } catch (RejectedExecutionException e) {
+            return false;
         }
+
+        return true;
     }
 
-    public void rollBack(K key) {
-        PendingTask<V> pTask = this.find(key);
+    private void initThreadPool(boolean isPrestartThreads) {
+        BlockingQueue<Runnable> blockingQueue =
+                new ArrayBlockingQueue<>(ConfigGetter.getInt("db.blockingqueue.size", BLOCKING_QUEUE_SIZE));
+        this.threadPoolExecutor = new CommandThreadPoolExecutor<K, V>(1, 1,
+                ConfigGetter.getInt("db.pool.keepalive", 5000),
+                TimeUnit.MILLISECONDS,
+                blockingQueue);
 
-        if (pTask.rollback() == 0) {
-            this.tasks.remove(key);
-        }
+        if (isPrestartThreads)
+            this.threadPoolExecutor.prestartAllCoreThreads();
     }
 }

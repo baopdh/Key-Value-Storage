@@ -18,57 +18,27 @@ import com.baopdh.dbserver.util.*;
 import org.apache.thrift.TBase;
 
 import java.util.concurrent.*;
+import java.util.concurrent.locks.Lock;
+import java.util.concurrent.locks.ReadWriteLock;
+import java.util.concurrent.locks.ReentrantReadWriteLock;
 
 /**
  *
  * @author cpu60019
  */
 public class Database<K, V extends TBase<?,?>> implements IDatabase<K, V> {
-    public static final int MUTEX_SIZE = 128; //lock concurrent taskMap operations with the same key
-    private static final int BLOCKING_QUEUE_SIZE = 10000;
+    private final Storage storage;
+    private final TaskMap<K, V> taskMap;
+    private final Class<V> resultType;
 
-    private Storage storage;
-    private CommandThreadPoolExecutor<K, V> threadPoolExecutor;
-    private TaskMap<K, V> taskMap;
+    private final ReadWriteLock lock = new ReentrantReadWriteLock(); // semaphore
+    private final Lock writeLock = lock.writeLock();
+    private final Lock readLock = lock.readLock();
 
-    private final Semaphore[] mutex = new Semaphore[MUTEX_SIZE];
-    private final MultipleReadWriteLog multipleReadWriteLog = new MultipleReadWriteLog();
-
-    private TransactionLog transactionLog;
-    private Class<V> resultType;
-
-    public Database(String dbName, boolean isPrestartThreads, TransactionLog transactionLog, Class<V> resultType) {
+    public Database(String dbName, boolean isPrestartThreads, Class<V> resultType) {
         this.storage = new Storage(dbName);
-
-        for (int i = 0; i < MUTEX_SIZE; ++i) {
-            mutex[i] = new Semaphore(1);
-        }
-
-        this.taskMap = new TaskMap<>(this.mutex);
-
-        this.initThreadPool(isPrestartThreads);
-        this.threadPoolExecutor.setTaskMap(this.taskMap);
-
-        this.transactionLog = transactionLog;
-
+        this.taskMap = new TaskMap<>(isPrestartThreads);
         this.resultType = resultType;
-    }
-
-    private void initThreadPool(boolean isPrestartThreads) {
-        BlockingQueue<Runnable> blockingQueue =
-                new ArrayBlockingQueue<>(ConfigGetter.getInt("db.blockingqueue.size", BLOCKING_QUEUE_SIZE));
-        this.threadPoolExecutor = new CommandThreadPoolExecutor<K, V>(1, 1,
-                ConfigGetter.getInt("db.pool.keepalive", 5000),
-                TimeUnit.MILLISECONDS,
-                blockingQueue);
-
-        if (isPrestartThreads)
-            this.threadPoolExecutor.prestartAllCoreThreads();
-    }
-
-    public static int getMutexIndex(Object key) {
-        int index = Hasher.hashToInt(key) % MUTEX_SIZE;
-        return index >= 0 ? index : -index;
     }
 
     @Override
@@ -83,16 +53,14 @@ public class Database<K, V extends TBase<?,?>> implements IDatabase<K, V> {
 
     @Override
     public V get(K key) {
-        // multiple writes at the same time
-        multipleReadWriteLog.lockRead();
-        // --------------------------------
+        readLock.lock();
         try {
             // find in task map
             PendingTask<V> pTask = this.taskMap.find(key);
             if (pTask != null) {
-                if (pTask.getType() == TASK.PUT) // if present
+                if (pTask.getType() == TASK.PUT) {// if present
                     return pTask.getValue();
-                if (pTask.getType() == TASK.DELETE) { // if key deleted
+                } else { // if key deleted
                     return null;
                 }
             }
@@ -112,63 +80,29 @@ public class Database<K, V extends TBase<?,?>> implements IDatabase<K, V> {
                 return null;
             }
         } finally {
-            multipleReadWriteLog.releaseRead();
+            readLock.unlock();
         }
     }
     
     @Override
     public boolean put(K key, V value) {
-        // multiple writes at the same time
-        multipleReadWriteLog.lockWrite();
-        // -----------------------------------
-
-        // if many tasks with the same key enter at the same time,
-        // this lock will prevent find operation return null many times
-        // and ensure safe concurrent modifications
-        int index = getMutexIndex(key);
-        mutex[index].acquireUninterruptibly();
-        // -----------------------------------
+        writeLock.lock();
         try {
-            taskMap.findAndUpdate(key, value, TASK.PUT);
-
             AsyncTask<K> task = new PutTask<>(key, DeSerializer.serialize(key), DeSerializer.serialize(value), this.storage);
-            try {
-                threadPoolExecutor.execute(task);
-            } catch (RejectedExecutionException e) {
-                taskMap.rollBack(key); // roll back
-                return false;
-            }
-
-            return true;
+            return this.taskMap.put(key, value, TASK.PUT, task);
         } finally {
-            mutex[index].release();
-            multipleReadWriteLog.releaseWrite();
+            writeLock.unlock();
         }
     }
     
     @Override
     public boolean remove(K key) {
-        // likewise as put
-        multipleReadWriteLog.lockWrite();
-
-        int index = getMutexIndex(key);
-        mutex[index].acquireUninterruptibly();
-        // -----------------------------------
+        writeLock.lock();
         try {
-            taskMap.findAndUpdate(key, null, TASK.DELETE);
-
             AsyncTask<K> task = new DeleteTask<>(key, DeSerializer.serialize(key), null, this.storage);
-            try {
-                threadPoolExecutor.execute(task);
-            } catch (RejectedExecutionException e) {
-                taskMap.rollBack(key); // roll back
-                return false;
-            }
-
-            return true;
+            return this.taskMap.put(key, null, TASK.DELETE, task);
         } finally {
-            mutex[index].release();
-            multipleReadWriteLog.releaseWrite();
+            writeLock.unlock();
         }
     }
 }

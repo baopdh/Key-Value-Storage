@@ -4,7 +4,6 @@ import com.baopdh.dbserver.util.Constant;
 import com.baopdh.dbserver.util.FileUtil;
 
 import java.io.*;
-import java.util.concurrent.Semaphore;
 
 public class IntegerKeyGenerate extends KeyGenerate<Integer>{
     private static final String KEY_FILE_NAME = "key.auto";
@@ -41,7 +40,7 @@ public class IntegerKeyGenerate extends KeyGenerate<Integer>{
         ++currentKey;
         try {
             this.fileWriter.seek(0);
-            this.fileWriter.write(currentKey);
+            this.fileWriter.writeInt(currentKey);
         } catch (IOException e) {
             e.printStackTrace();
             return -1;
@@ -61,10 +60,12 @@ public class IntegerKeyGenerate extends KeyGenerate<Integer>{
     private boolean readCurrentKey(String fileUrl) {
         boolean result = true;
         try {
-            InputStream input = new FileInputStream(fileUrl);
-            DataInputStream fileReader = new DataInputStream(input);
+            RandomAccessFile fileReader = new RandomAccessFile(fileUrl, "rw");
             try {
-                this.currentKey = fileReader.read();
+                this.currentKey = fileReader.readInt();
+            } catch (EOFException e) {
+                this.currentKey = 0;
+                result = true;
             } catch (IOException e) {
                 e.printStackTrace();
                 result = false;
@@ -77,8 +78,7 @@ public class IntegerKeyGenerate extends KeyGenerate<Integer>{
                 }
             }
         } catch (FileNotFoundException e) {
-            this.currentKey = 0;
-            result = true;
+            e.printStackTrace();
         }
 
         return result;

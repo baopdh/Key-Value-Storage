@@ -23,21 +23,20 @@ import java.util.concurrent.TimeUnit;
  */
 public class Main {
     public static KVStoreHandler kvStoreHandler;
-
     public static KVStoreService.Processor<?> processor;
 
     public static void main(String[] args) {
         // start http profiler server
         ProfilerServer profilerServer = new ProfilerServer();
+        System.out.println("Starting profiler server");
         if (!profilerServer.start())
             System.out.println("Profiler server failed to start");
         else
-            System.out.println("Start profiler server");
+            System.out.println("Profiler server is running");
 
         // start thrift database server
-        kvStoreHandler = new KVStoreHandler("Test");
+        kvStoreHandler = new KVStoreHandler("Test1");
         processor = new KVStoreService.Processor<>(kvStoreHandler);
-
         try {
             TServerTransport serverTransport = new TServerSocket(9090);
 
@@ -48,12 +47,13 @@ public class Main {
             server.serve();
         } catch (Exception e) {
             e.printStackTrace();
+            System.out.println("Error starting database server: " + e.getMessage());
         }
     }
 
 //    public static void main(String[] args) {
 //        DatabaseAccessLayer<Integer, User> databaseAccessLayer =
-//                new DatabaseAccessLayer<>("Test", KeyGenerate.TYPE.INT, User.class);
+//                new DatabaseAccessLayer<>("Test1", KeyGenerate.TYPE.INT, User.class);
 //
 //        databaseAccessLayer.start();
 //
@@ -62,8 +62,8 @@ public class Main {
 //        final String delete = "delete";
 //
 //        int[] a = new int[]{1,2,3,2,4,4,6,6,8,4,1,1};
-//        String[] action = new String[]{put, put, put, get, put, put, put, get, put, get, delete, get};
-//
+////        String[] action = new String[]{put, put, put, get, put, put, put, get, put, get, delete, get};
+//        String[] action = new String[]{get, get, get, get, get, get, get, get, get, get, get, get};
 //        for (int i = 0; i < 3; ++i) {
 //            switch (action[i]) {
 //                case put:

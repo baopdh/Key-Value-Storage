@@ -59,6 +59,7 @@ public class LRUCache<K, V> implements IService<K, V> {
             this.tail.next = node;
             this.tail = node;
         }
+        //-----------------------------
 
         --this.size;
     }
@@ -118,7 +119,6 @@ public class LRUCache<K, V> implements IService<K, V> {
                 node = new Node(key, value);
                 // remove least recently used item if no more capacity
                 if (this.size == 0) {
-                    hMap.remove(this.head.key);
                     this.deleteNode(this.head);
                 }
                 //----------------------------------------------------

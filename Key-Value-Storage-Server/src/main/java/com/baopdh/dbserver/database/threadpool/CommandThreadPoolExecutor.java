@@ -18,14 +18,8 @@ import java.util.concurrent.TimeUnit;
  * @author cpu60019
  */
 public class CommandThreadPoolExecutor<K, V extends TBase<?,?>> extends ThreadPoolExecutor {
-    private TaskMap<K, V> taskMap;
-
     public CommandThreadPoolExecutor(int corePoolSize, int maximumPoolSize, long keepAliveTime, TimeUnit unit, BlockingQueue<Runnable> workQueue) {
         super(corePoolSize, maximumPoolSize, keepAliveTime, unit, workQueue);
-    }
-
-    public void setTaskMap(TaskMap<K, V> taskMap) {
-        this.taskMap = taskMap;
     }
 
     @Override
@@ -34,9 +28,7 @@ public class CommandThreadPoolExecutor<K, V extends TBase<?,?>> extends ThreadPo
         super.afterExecute(r, t);
 
         if (t != null) { // handle failed execution here
-            System.out.println("Worker failed");
+            System.out.println("Worker failed " + ((AsyncTask<K>) r).getKey());
         }
-
-        this.taskMap.tryRemove(((AsyncTask<K>) r).getKey());
     }
 }

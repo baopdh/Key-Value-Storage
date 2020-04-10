@@ -18,6 +18,7 @@ import com.baopdh.dbserver.util.DeSerializer;
 import org.apache.thrift.TBase;
 
 import java.nio.ByteBuffer;
+import java.util.concurrent.Semaphore;
 import java.util.concurrent.TimeUnit;
 
 /**
@@ -32,12 +33,14 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
     private final int retryTime, retryDelay;
     private final TransactionLog transactionLog;
 
+    private final Semaphore mutex = new Semaphore(1); // use to ensure write order in many layers
+
     public DatabaseAccessLayer(String dbName, KeyGenerate.TYPE keyType, Class<V> resultType) {
         this.retryTime = ConfigGetter.getInt("db.retry.time", 3);
         this.retryDelay = ConfigGetter.getInt("db.retry.delay", 1);
         this.dbName = dbName;
         this.transactionLog = new TransactionLog(dbName);
-        this.database = new Database<K, V>(dbName, true, transactionLog, resultType);
+        this.database = new Database<K, V>(dbName, true, resultType);
         this.cache = new Cache<>();
         this.initKeyGen(keyType);
     }
@@ -81,43 +84,59 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
 
     @Override
     public boolean put(K key, V value) {
-        for (int i = 0; i < this.retryTime; ++i) {
-            if (database.put(key, value)) {
-                this.transactionLog.commit(
-                        new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.PUT));
-                return cache.put(key, value);
-            }
-
+        for (int i = 0; i < this.retryTime; ++i) { // do retryTime times
+            mutex.acquireUninterruptibly();
             try {
-                TimeUnit.SECONDS.sleep(this.retryDelay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
+                if (database.put(key, value)) { // if action success, put cache, return
+                    this.transactionLog.commit(
+                            new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.PUT));
+                    return cache.put(key, value);
+                } else { // else sleep if has more retry times, otherwise commit a warning
+                    if (i < this.retryTime - 1) {
+                        try {
+                            TimeUnit.SECONDS.sleep(this.retryDelay);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        this.transactionLog.commit(
+                                new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.WARNING));
+                        System.out.println("Denied task " + key);
+                    }
+                }
+            } finally {
+                mutex.release();
             }
         }
 
-        this.transactionLog.commit(
-                new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.WARNING));
         return false;
     }
     
     @Override
     public boolean remove(K key) {
-        for (int i = 0; i < this.retryTime; ++i) {
-            if (database.remove(key)) {
-                this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.DELETE));
-                return cache.remove(key);
-            }
-
+        for (int i = 0; i < this.retryTime; ++i) { // do retryTime times
+            mutex.acquireUninterruptibly();
             try {
-                TimeUnit.SECONDS.sleep(this.retryDelay);
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-                break;
+                if (database.remove(key)) { // if action success, put cache, return
+                    this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.DELETE));
+                    return cache.remove(key);
+                } else { // else sleep if has more retry times, otherwise commit a warning
+                    if (i < this.retryTime - 1) {
+                        try {
+                            TimeUnit.SECONDS.sleep(this.retryDelay);
+                        } catch (InterruptedException e) {
+                            e.printStackTrace();
+                        }
+                    } else {
+                        this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.WARNING));
+                        System.out.println("Denied task " + key);
+                    }
+                }
+            } finally {
+                mutex.release();
             }
         }
 
-        this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.WARNING));
         return false;
     }
 }

@@ -8,6 +8,8 @@ import org.apache.thrift.protocol.TProtocol;
 import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
+import java.net.SocketException;
+
 public class KVStoreClient {
     private TTransport transport;
     private KVStoreService.Client client;
@@ -62,11 +64,14 @@ public class KVStoreClient {
         }
     }
 
-    public User get(int id) {
+    public User get(int id) throws SocketException {
         try {
             return client.get(id);
-        } catch (TException e) {
-            e.printStackTrace();
+        } catch (Exception e) {
+            System.out.println("Client: " + e.getMessage());
+            if (!this.open()) {
+                throw new SocketException();
+            }
             return null;
         }
     }

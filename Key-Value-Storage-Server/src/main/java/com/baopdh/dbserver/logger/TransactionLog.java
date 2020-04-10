@@ -11,7 +11,7 @@ import java.time.LocalDate;
 import java.util.concurrent.Semaphore;
 
 public class TransactionLog {
-    private static final int FILE_SIZE_LIMIT = ConfigGetter.getInt("database.log.file.max-size", 1000000);
+    private static final int FILE_SIZE_LIMIT = ConfigGetter.getInt("database.log.file.max-size", 10000000);
     private static final String ID_FILE = "id.auto";
 
     private String dbName;
