@@ -12,7 +12,7 @@ enum TASK {
 	PUT, DELETE, WARNING
 }
 
-struct Task {
+struct Operation {
 	1: binary key,
 	2: binary value,
 	3: TASK task

@@ -10,8 +10,7 @@ import com.baopdh.dbserver.database.Database;
 import com.baopdh.dbserver.keygen.IntegerKeyGenerate;
 import com.baopdh.dbserver.keygen.KeyGenerate;
 import com.baopdh.dbserver.thrift.gen.TASK;
-import com.baopdh.dbserver.thrift.gen.Task;
-import com.baopdh.dbserver.thrift.gen.User;
+import com.baopdh.dbserver.thrift.gen.Operation;
 import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.dbserver.logger.TransactionLog;
 import com.baopdh.dbserver.util.DeSerializer;
@@ -89,7 +88,7 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
             try {
                 if (database.put(key, value)) { // if action success, put cache, return
                     this.transactionLog.commit(
-                            new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.PUT));
+                            new Operation(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.PUT));
                     return cache.put(key, value);
                 } else { // else sleep if has more retry times, otherwise commit a warning
                     if (i < this.retryTime - 1) {
@@ -100,7 +99,7 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
                         }
                     } else {
                         this.transactionLog.commit(
-                                new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.WARNING));
+                                new Operation(ByteBuffer.wrap(DeSerializer.serialize(key)), ByteBuffer.wrap(DeSerializer.serialize(value)), TASK.WARNING));
                         System.out.println("Denied task " + key);
                     }
                 }
@@ -118,7 +117,7 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
             mutex.acquireUninterruptibly();
             try {
                 if (database.remove(key)) { // if action success, put cache, return
-                    this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.DELETE));
+                    this.transactionLog.commit(new Operation(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.DELETE));
                     return cache.remove(key);
                 } else { // else sleep if has more retry times, otherwise commit a warning
                     if (i < this.retryTime - 1) {
@@ -128,7 +127,7 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
                             e.printStackTrace();
                         }
                     } else {
-                        this.transactionLog.commit(new Task(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.WARNING));
+                        this.transactionLog.commit(new Operation(ByteBuffer.wrap(DeSerializer.serialize(key)), null, TASK.WARNING));
                         System.out.println("Denied task " + key);
                     }
                 }

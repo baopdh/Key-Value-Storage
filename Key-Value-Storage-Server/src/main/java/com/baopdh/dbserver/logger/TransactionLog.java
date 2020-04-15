@@ -1,6 +1,6 @@
 package com.baopdh.dbserver.logger;
 
-import com.baopdh.dbserver.thrift.gen.Task;
+import com.baopdh.dbserver.thrift.gen.Operation;
 import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.dbserver.util.Constant;
 import com.baopdh.dbserver.util.DeSerializer;
@@ -51,10 +51,10 @@ public class TransactionLog {
         return true;
     }
 
-    public boolean commit(Task task) {
+    public boolean commit(Operation operation) {
         mutex.acquireUninterruptibly();
         try {
-            byte[] arr = DeSerializer.serialize(task);
+            byte[] arr = DeSerializer.serialize(operation);
 
             if (arr.length + curFileSize > FILE_SIZE_LIMIT) {
                 rollBySize();
