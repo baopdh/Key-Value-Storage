@@ -26,7 +26,7 @@ class Action {
 public class Main {
     private static final String PHONE_NUMBER = "0123456789";
 
-    public static void main2(String[] args) {
+    public static void main(String[] args) {
         Runnable r = () -> {
             KVStoreClient client = new KVStoreClient();
             if (!client.open()) {
@@ -40,7 +40,7 @@ public class Main {
                 try {
                     User u = client.get(key);
 //                    System.out.println("Get " + key + " " + (u != null ? u : ""));
-//                    Thread.sleep(500);
+//                    Thread.sleep(300);
                 } catch (Exception e) {
                     System.err.println("Main :" + e.getMessage());
                 }
@@ -53,7 +53,7 @@ public class Main {
         t2.start();
     }
 
-    public static void main1(String[] args) {
+    public static void main2(String[] args) {
         Runnable r = () -> {
             KVStoreClient client = new KVStoreClient();
             if (!client.open()) {
@@ -102,7 +102,6 @@ public class Main {
         switch (actions[i].type) {
             case PUT:
                 int key = client.getKey();
-                key = 1;
                 System.out.println("Client " + i + " put " + client.put(key, actions[i].user));
                 break;
             case GET:
@@ -121,33 +120,30 @@ public class Main {
         client.close();
     }
 
-    public static void main(String[] args) {
-        run(0);
-        run(3);
-        
+    public static void main1(String[] args) {
         // put
-//        for (int i = 0; i < 3; ++i) {
-//            final int ind = i;
-//            Runnable r = () -> {
-//                run(ind);
-//            };
-//            new Thread(r).start();
-//        }
-//
-//        // wait for put
-//        try {
-//            TimeUnit.SECONDS.sleep(5);
-//        } catch (InterruptedException e) {
-//            System.out.println(e.getMessage());
-//        }
-//
-//        // get and delete
-//        for (int i = 3; i < actions.length; ++i) {
-//            final int ind = i;
-//            Runnable r = () -> {
-//                run(ind);
-//            };
-//            new Thread(r).start();
-//        }
-//    }
+        for (int i = 0; i < 3; ++i) {
+            final int ind = i;
+            Runnable r = () -> {
+                run(ind);
+            };
+            new Thread(r).start();
+        }
+
+        // wait for put
+        try {
+            TimeUnit.SECONDS.sleep(5);
+        } catch (InterruptedException e) {
+            System.out.println(e.getMessage());
+        }
+
+        // get and delete
+        for (int i = 3; i < actions.length; ++i) {
+            final int ind = i;
+            Runnable r = () -> {
+                run(ind);
+            };
+            new Thread(r).start();
+        }
+    }
 }

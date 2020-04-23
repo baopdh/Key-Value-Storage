@@ -17,6 +17,9 @@ import org.apache.thrift.transport.TServerSocket;
 import org.apache.thrift.transport.TServerTransport;
 
 import java.util.concurrent.TimeUnit;
+import org.apache.thrift.server.TNonblockingServer;
+import org.apache.thrift.transport.TNonblockingServerSocket;
+import org.apache.thrift.transport.TNonblockingServerTransport;
 
 /**
  *
@@ -40,10 +43,11 @@ public class Main {
             kvStoreHandler = new KVStoreHandler("Test1");
             processor = new KVStoreService.Processor<>(kvStoreHandler);
             
-            TServerTransport serverTransport = new TServerSocket(9090);
+//            TServerTransport serverTransport = new TServerSocket(9090);
+            TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(9090);
 
-            // Use this for a multithreaded server
-             TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
+//             TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
+            TServer server = new TNonblockingServer(new TNonblockingServer.Args(serverTransport).processor(processor));
 
             System.out.println("Starting the database server...");
             server.serve();

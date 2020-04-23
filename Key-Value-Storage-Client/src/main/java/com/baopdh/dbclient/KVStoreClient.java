@@ -5,10 +5,11 @@ import com.baopdh.thrift.gen.User;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
-import org.apache.thrift.transport.TSocket;
 import org.apache.thrift.transport.TTransport;
 
 import java.net.SocketException;
+import org.apache.thrift.transport.TFramedTransport;
+import org.apache.thrift.transport.TSocket;
 
 public class KVStoreClient {
     private TTransport transport;
@@ -16,7 +17,7 @@ public class KVStoreClient {
 
     public boolean open() {
         try {
-            transport = new TSocket("localhost", 9090);
+            transport = new TFramedTransport(new TSocket("localhost", 9090));
             transport.open();
 
             TProtocol protocol = new TBinaryProtocol(transport);
@@ -68,8 +69,7 @@ public class KVStoreClient {
         try {
             return client.get(id);
         } catch (Exception e) {
-//            System.out.println("Client: " + e.getMessage());
-                e.printStackTrace();
+            System.out.println("Client: " + e.getMessage());
             if (!this.open()) {
                 throw new SocketException();
             }

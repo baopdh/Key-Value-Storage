@@ -6,7 +6,6 @@
 package com.baopdh.dbserver.database.threadpool;
 
 import com.baopdh.dbserver.database.asynctask.AsyncTask;
-import com.baopdh.dbserver.database.taskmap.TaskMap;
 import org.apache.thrift.TBase;
 
 import java.util.concurrent.BlockingQueue;
