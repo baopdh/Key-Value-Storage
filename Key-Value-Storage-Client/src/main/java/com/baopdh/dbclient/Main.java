@@ -1,6 +1,6 @@
 package com.baopdh.dbclient;
 
-import com.baopdh.dbclient.thrift.gen.User;
+import com.baopdh.thrift.gen.User;
 import org.apache.commons.lang3.RandomStringUtils;
 
 import java.util.Random;
@@ -26,7 +26,7 @@ class Action {
 public class Main {
     private static final String PHONE_NUMBER = "0123456789";
 
-    public static void main(String[] args) {
+    public static void main2(String[] args) {
         Runnable r = () -> {
             KVStoreClient client = new KVStoreClient();
             if (!client.open()) {
@@ -102,12 +102,13 @@ public class Main {
         switch (actions[i].type) {
             case PUT:
                 int key = client.getKey();
+                key = 1;
                 System.out.println("Client " + i + " put " + client.put(key, actions[i].user));
                 break;
             case GET:
                 try {
                     User u = client.get(actions[i].id);
-                    System.out.println("Client " + i + " get " + actions[i].id + " " + (u != null ? u : ""));
+                    System.out.println("Client " + i + " get " + actions[i].id + " " + (u != null ? u : "null"));
                 } catch (Exception e) {
                     e.printStackTrace();
                 }
@@ -120,7 +121,10 @@ public class Main {
         client.close();
     }
 
-//    public static void main(String[] args) {
+    public static void main(String[] args) {
+        run(0);
+        run(3);
+        
         // put
 //        for (int i = 0; i < 3; ++i) {
 //            final int ind = i;

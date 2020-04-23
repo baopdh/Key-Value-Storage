@@ -1,10 +1,10 @@
 package com.baopdh.dbserver.logger;
 
-import com.baopdh.dbserver.thrift.gen.Operation;
 import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.dbserver.util.Constant;
 import com.baopdh.dbserver.util.DeSerializer;
 import com.baopdh.dbserver.util.FileUtil;
+import com.baopdh.thrift.gen.Operation;
 
 import java.io.*;
 import java.time.LocalDate;

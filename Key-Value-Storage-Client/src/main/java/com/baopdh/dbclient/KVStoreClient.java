@@ -1,7 +1,7 @@
 package com.baopdh.dbclient;
 
-import com.baopdh.dbclient.thrift.gen.KVStoreService;
-import com.baopdh.dbclient.thrift.gen.User;
+import com.baopdh.thrift.gen.KVStoreService;
+import com.baopdh.thrift.gen.User;
 import org.apache.thrift.TException;
 import org.apache.thrift.protocol.TBinaryProtocol;
 import org.apache.thrift.protocol.TProtocol;
@@ -68,7 +68,8 @@ public class KVStoreClient {
         try {
             return client.get(id);
         } catch (Exception e) {
-            System.out.println("Client: " + e.getMessage());
+//            System.out.println("Client: " + e.getMessage());
+                e.printStackTrace();
             if (!this.open()) {
                 throw new SocketException();
             }

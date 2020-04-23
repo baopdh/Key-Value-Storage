@@ -3,16 +3,17 @@ package com.baopdh.dbserver.thrift.handler;
 import com.baopdh.dbserver.DatabaseAccessLayer;
 import com.baopdh.dbserver.keygen.KeyGenerate;
 import com.baopdh.dbserver.profiler.ApiList;
-import com.baopdh.dbserver.thrift.gen.*;
+import com.baopdh.thrift.gen.*;
 import org.apache.thrift.TException;
 
 public class KVStoreHandler implements KVStoreService.Iface {
+
     private final DatabaseAccessLayer<Integer, User> databaseAccessLayer;
     private final ApiList apiList = ApiList.getInstance();
 
     public KVStoreHandler(String dbName) {
-        databaseAccessLayer =
-                new DatabaseAccessLayer<>(dbName, KeyGenerate.TYPE.INT, User.class);
+        databaseAccessLayer
+                = new DatabaseAccessLayer<>(dbName, KeyGenerate.TYPE.INT, User.class);
         databaseAccessLayer.start();
     }
 
@@ -26,7 +27,9 @@ public class KVStoreHandler implements KVStoreService.Iface {
         apiList.addPendingRequest(ApiList.API.GET);
         long start = System.currentTimeMillis();
         try {
-            return databaseAccessLayer.get(id);
+            User res = databaseAccessLayer.get(id);
+
+            return res;
         } finally {
             apiList.saveNewRequest(ApiList.API.GET, System.currentTimeMillis() - start);
         }

@@ -1,6 +1,7 @@
 package com.baopdh.dbserver.database.taskmap;
 
-import com.baopdh.dbserver.thrift.gen.TASK;
+import com.baopdh.thrift.gen.TASK;
+
 
 public class PendingTask<V> {
     private TASK type;

@@ -8,8 +8,8 @@ package com.baopdh.dbserver.database.taskmap;
 import com.baopdh.dbserver.cache.LRUCache;
 import com.baopdh.dbserver.database.asynctask.AsyncTask;
 import com.baopdh.dbserver.database.threadpool.CommandThreadPoolExecutor;
-import com.baopdh.dbserver.thrift.gen.TASK;
 import com.baopdh.dbserver.util.ConfigGetter;
+import com.baopdh.thrift.gen.TASK;
 import org.apache.thrift.TBase;
 
 import java.util.concurrent.*;

@@ -9,11 +9,11 @@ import com.baopdh.dbserver.cache.Cache;
 import com.baopdh.dbserver.database.Database;
 import com.baopdh.dbserver.keygen.IntegerKeyGenerate;
 import com.baopdh.dbserver.keygen.KeyGenerate;
-import com.baopdh.dbserver.thrift.gen.TASK;
-import com.baopdh.dbserver.thrift.gen.Operation;
 import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.dbserver.logger.TransactionLog;
 import com.baopdh.dbserver.util.DeSerializer;
+import com.baopdh.thrift.gen.Operation;
+import com.baopdh.thrift.gen.TASK;
 import org.apache.thrift.TBase;
 
 import java.nio.ByteBuffer;

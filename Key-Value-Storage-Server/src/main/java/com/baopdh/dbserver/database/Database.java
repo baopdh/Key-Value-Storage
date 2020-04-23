@@ -11,13 +11,10 @@ import com.baopdh.dbserver.database.asynctask.PutTask;
 import com.baopdh.dbserver.database.storage.Storage;
 import com.baopdh.dbserver.database.taskmap.PendingTask;
 import com.baopdh.dbserver.database.taskmap.TaskMap;
-import com.baopdh.dbserver.database.threadpool.CommandThreadPoolExecutor;
-import com.baopdh.dbserver.logger.TransactionLog;
-import com.baopdh.dbserver.thrift.gen.TASK;
 import com.baopdh.dbserver.util.*;
+import com.baopdh.thrift.gen.TASK;
 import org.apache.thrift.TBase;
 
-import java.util.concurrent.*;
 import java.util.concurrent.locks.Lock;
 import java.util.concurrent.locks.ReadWriteLock;
 import java.util.concurrent.locks.ReentrantReadWriteLock;

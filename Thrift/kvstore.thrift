@@ -1,4 +1,4 @@
-namespace java kvstore
+namespace java com.baopdh.thrift.gen
 
 typedef i32 int
 
