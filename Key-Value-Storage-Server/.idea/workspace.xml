@@ -1,9 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/.idea/workspace.xml" afterDir="false" />
-    </list>
+    <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="" />
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -33,7 +31,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Databases/Profile-Store" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
@@ -86,6 +84,7 @@
       <workItem from="1586941793177" duration="1226000" />
       <workItem from="1586958639383" duration="917000" />
       <workItem from="1587874801587" duration="1324000" />
+      <workItem from="1587877439053" duration="170000" />
     </task>
     <servers />
   </component>

@@ -9,8 +9,9 @@ public class ConfigGetter {
         int res = defaultValue;
 
         String value = Config.getInstance().getProperty(config);
-        if (value != null)
+        try {
             res = Integer.parseInt(value);
+        } catch (Exception e) {} // ignore exception
 
         return res;
     }
@@ -19,7 +20,7 @@ public class ConfigGetter {
         String res = defaultValue;
 
         String value = Config.getInstance().getProperty(config);
-        if (value != null)
+        if (value != null && !value.equals(""))
             res = value;
 
         return res;
