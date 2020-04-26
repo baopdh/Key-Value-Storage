@@ -3,6 +3,8 @@
   <component name="ChangeListManager">
     <list default="true" id="5bf32df3-6c4c-4197-95fd-abafa38782f3" name="Default Changelist" comment="">
       <change afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/keygen/StringKeyGenerate.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/.idea/workspace.xml" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />

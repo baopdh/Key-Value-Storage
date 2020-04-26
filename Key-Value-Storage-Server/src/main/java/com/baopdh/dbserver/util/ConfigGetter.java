@@ -8,9 +8,19 @@ public class ConfigGetter {
     public static int getInt(String config, int defaultValue) {
         int res = defaultValue;
 
-        String size = Config.getInstance().getProperty(config);
-        if (size != null)
-            res = Integer.parseInt(size);
+        String value = Config.getInstance().getProperty(config);
+        if (value != null)
+            res = Integer.parseInt(value);
+
+        return res;
+    }
+
+    public static String get(String config, String defaultValue) {
+        String res = defaultValue;
+
+        String value = Config.getInstance().getProperty(config);
+        if (value != null)
+            res = value;
 
         return res;
     }

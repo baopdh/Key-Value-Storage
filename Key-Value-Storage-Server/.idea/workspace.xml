@@ -2,8 +2,7 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="">
-      <change afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/keygen/StringKeyGenerate.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Client/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Client/.idea/workspace.xml" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -34,7 +33,7 @@
     <property name="SHARE_PROJECT_CONFIGURATION_FILES" value="true" />
     <property name="WebServerToolWindowFactoryState" value="false" />
     <property name="aspect.path.notification.shown" value="true" />
-    <property name="last_opened_file_path" value="$PROJECT_DIR$/../Key-Value-Storage-Client" />
+    <property name="last_opened_file_path" value="$PROJECT_DIR$/../../Databases/Profile-Store" />
     <property name="settings.editor.selected.configurable" value="project.propVCSSupport.Mappings" />
   </component>
   <component name="RecentsManager">
@@ -86,7 +85,7 @@
       <workItem from="1586497077281" duration="5113000" />
       <workItem from="1586941793177" duration="1226000" />
       <workItem from="1586958639383" duration="917000" />
-      <workItem from="1587874801587" duration="705000" />
+      <workItem from="1587874801587" duration="1324000" />
     </task>
     <servers />
   </component>
@@ -115,10 +114,10 @@
       <screen x="67" y="27" width="1373" height="873" />
     </state>
     <state x="486" y="211" width="524" height="502" key="#com.intellij.refactoring.safeDelete.UnsafeUsagesDialog/67.27.1373.873@67.27.1373.873" timestamp="1585906984517" />
-    <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl" timestamp="1586359539667">
+    <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl" timestamp="1587876169266">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl/67.27.1373.873@67.27.1373.873" timestamp="1586359539667" />
+    <state x="531" y="260" width="424" height="484" key="FileChooserDialogImpl/67.27.1373.873@67.27.1373.873" timestamp="1587876169266" />
     <state width="1327" height="219" key="GridCell.Tab.0.bottom" timestamp="1586504686255">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
