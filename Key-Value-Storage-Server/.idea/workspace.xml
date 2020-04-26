@@ -1,7 +1,10 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <project version="4">
   <component name="ChangeListManager">
-    <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="" />
+    <list default="true" id="8ba3d9c9-3aef-4d96-9ec9-efd2966be67e" name="Default Changelist" comment="">
+      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
+      <change beforePath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/util/ConfigGetter.java" beforeDir="false" afterPath="$PROJECT_DIR$/src/main/java/com/baopdh/dbserver/util/ConfigGetter.java" afterDir="false" />
+    </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
     <option name="HIGHLIGHT_NON_ACTIVE_CHANGELIST" value="false" />
@@ -85,6 +88,7 @@
       <workItem from="1586958639383" duration="917000" />
       <workItem from="1587874801587" duration="1324000" />
       <workItem from="1587877439053" duration="170000" />
+      <workItem from="1587877948830" duration="121000" />
     </task>
     <servers />
   </component>
@@ -157,10 +161,10 @@
       <screen x="67" y="27" width="1373" height="873" />
     </state>
     <state x="409" y="291" key="com.intellij.ide.util.TipDialog/67.27.1373.873@67.27.1373.873" timestamp="1585582881308" />
-    <state x="398" y="71" width="710" height="783" key="find.popup" timestamp="1587875513198">
+    <state x="398" y="71" width="710" height="783" key="find.popup" timestamp="1587877978524">
       <screen x="67" y="27" width="1373" height="873" />
     </state>
-    <state x="398" y="71" width="710" height="783" key="find.popup/67.27.1373.873@67.27.1373.873" timestamp="1587875513198" />
+    <state x="398" y="71" width="710" height="783" key="find.popup/67.27.1373.873@67.27.1373.873" timestamp="1587877978524" />
     <state x="67" y="104" width="1363" height="796" key="new project wizard" timestamp="1585723502110">
       <screen x="67" y="27" width="1373" height="873" />
     </state>

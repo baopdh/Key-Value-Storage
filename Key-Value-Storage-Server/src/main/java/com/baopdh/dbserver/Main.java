@@ -8,6 +8,7 @@ package com.baopdh.dbserver;
 import com.baopdh.dbserver.keygen.KeyGenerate;
 import com.baopdh.dbserver.profiler.ProfilerServer;
 import com.baopdh.dbserver.thrift.handler.KVStoreHandler;
+import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.thrift.gen.KVStoreService;
 import com.baopdh.thrift.gen.KVStoreService.Iface;
 import com.baopdh.thrift.gen.User;
@@ -40,11 +41,12 @@ public class Main {
 
         // start thrift database server
         try {
-            kvStoreHandler = new KVStoreHandler("Test1");
+            kvStoreHandler = new KVStoreHandler(ConfigGetter.get("db.name", "Storage"));
             processor = new KVStoreService.Processor<>(kvStoreHandler);
             
 //            TServerTransport serverTransport = new TServerSocket(9090);
-            TNonblockingServerTransport serverTransport = new TNonblockingServerSocket(9090);
+            TNonblockingServerTransport serverTransport =
+                    new TNonblockingServerSocket(ConfigGetter.getInt("db.port", 9090));
 
 //             TServer server = new TThreadPoolServer(new TThreadPoolServer.Args(serverTransport).processor(processor));
             TServer server = new TNonblockingServer(new TNonblockingServer.Args(serverTransport).processor(processor));
