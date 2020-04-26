@@ -2,11 +2,8 @@
 <project version="4">
   <component name="ChangeListManager">
     <list default="true" id="5bf32df3-6c4c-4197-95fd-abafa38782f3" name="Default Changelist" comment="">
-      <change beforePath="$PROJECT_DIR$/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/.idea/workspace.xml" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Server/.idea/workspace.xml" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/.idea/workspace.xml" afterDir="false" />
+      <change afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/keygen/StringKeyGenerate.java" afterDir="false" />
       <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/DatabaseAccessLayer.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/logger/TransactionLog.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/logger/TransactionLog.java" afterDir="false" />
-      <change beforePath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/thrift/gen/Task.java" beforeDir="false" afterPath="$PROJECT_DIR$/../Key-Value-Storage-Server/src/main/java/com/baopdh/dbserver/thrift/gen/Operation.java" afterDir="false" />
     </list>
     <option name="SHOW_DIALOG" value="false" />
     <option name="HIGHLIGHT_CONFLICTS" value="true" />
@@ -78,6 +75,7 @@
       <workItem from="1586497075353" duration="4214000" />
       <workItem from="1586941800377" duration="1025000" />
       <workItem from="1586958637253" duration="598000" />
+      <workItem from="1587874804751" duration="592000" />
     </task>
     <servers />
   </component>

@@ -9,6 +9,7 @@ import com.baopdh.dbserver.cache.Cache;
 import com.baopdh.dbserver.database.Database;
 import com.baopdh.dbserver.keygen.IntegerKeyGenerate;
 import com.baopdh.dbserver.keygen.KeyGenerate;
+import com.baopdh.dbserver.keygen.StringKeyGenerate;
 import com.baopdh.dbserver.util.ConfigGetter;
 import com.baopdh.dbserver.logger.TransactionLog;
 import com.baopdh.dbserver.util.DeSerializer;
@@ -50,7 +51,7 @@ public class DatabaseAccessLayer<K, V extends TBase<?,?>> implements IService<K,
                 this.keyGenerate = new IntegerKeyGenerate(dbName);
                 break;
             case STRING:
-                // init string key generate here
+                this.keyGenerate = new StringKeyGenerate(dbName);
                 break;
         }
 
